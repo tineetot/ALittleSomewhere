@@ -1,6 +1,8 @@
-# A Little Somewhere
+# A Little Somewhere 🎀
 
 A personal digital scrapbook for journaling, planning, reflection, and keeping everyday memories.
+
+**[Try A Little Somewhere →](https://alittlesomewhere.vercel.app/)**
 
 ## About the Project
 
@@ -17,7 +19,7 @@ It also gives me a practical way to learn how to build an application with sever
 ## Features
 
 - **Journal** — Write daily entries, select moods, format text, and attach notes to highlights.
-- **Planner** — Organize daily tasks, mark priorities, track completion, and create recurring to-dos.
+- **Planner** — Organize tasks, mark priorities, track completion, and create recurring to-dos.
 - **Reflect** — Answer daily prompts, record gratitude, and make time for personal check-ins.
 - **Spin** — Discover randomized solo-date activities and small side quests.
 - **Solo Date Passport** — Record experiences through notes, ratings, photos, and personal to-dos.
@@ -25,9 +27,23 @@ It also gives me a practical way to learn how to build an application with sever
 
 ## Technology
 
-The project uses **HTML, CSS, and TypeScript**, with **Vite** for development and production builds. **Node.js and npm** support the development tools and dependencies.
+- **HTML and CSS** — Page structure and visual styling.
+- **TypeScript** — Application logic.
+- **Vite** — Local development and production builds.
+- **Node.js and npm** — Development tools and dependency management.
+- **Vercel** — Website hosting.
 
 The application also includes a web app manifest and service-worker functionality as part of its progressive web app foundation.
+
+## Try It Online
+
+Visit **[alittlesomewhere.vercel.app](https://alittlesomewhere.vercel.app/)** to explore the application without installing the development tools.
+
+## Your Data
+
+The current version is designed around local browser storage. Entries saved on one browser or device do not automatically appear on another. The online website and your localhost copy also have separate saved data.
+
+Clearing site data can remove locally saved content.
 
 ## What I’m Learning
 
