@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Little Somewhere 🎀</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#e2789b">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="A Little Somewhere">
+
+  <script type="module" crossorigin src="./assets/index-BpcbMT0Y.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BYn6UmbI.css">
+</head>
+<body><a class="skip-link" href="#mainContent">Skip to your pages</a>
+
+<div id="ambient"></div>
+<svg class="corner tl" viewBox="0 0 100 100"><path d="M0,0 Q50,0 50,50 Q0,50 0,0" fill="none" stroke="#f0bfd2" stroke-width="2"/><circle cx="8" cy="8" r="4" fill="#f9cddd"/></svg>
+<svg class="corner tr" viewBox="0 0 100 100"><path d="M0,0 Q50,0 50,50 Q0,50 0,0" fill="none" stroke="#f0bfd2" stroke-width="2"/><circle cx="8" cy="8" r="4" fill="#f9cddd"/></svg>
+
+<header class="top">
+  <div class="brand"><span class="seal"><img src="./icon-192.png" alt=""></span><span class="display italic">A Little Somewhere</span></div>
+  <nav class="tabs" aria-label="Your scrapbook sections">
+    <button class="tab" data-tab="journal">Journal</button>
+    <button class="tab" data-tab="reflect">Reflect</button>
+    <button class="tab active" data-tab="planner">Planner</button>
+    <button class="tab" data-tab="wheel">Spin</button>
+    <button class="tab" data-tab="passport">Passport</button>
+  </nav>
+</header>
+
+<main id="mainContent"><div id="updateNotice" class="app-message" hidden>A fresh version is ready. Save your pages, then <button id="updateApp" class="ghost">Update app</button></div><div id="appError" class="app-message" role="alert" hidden><span id="appErrorText"></span><div class="flex flex-wrap gap-2 mt-2"><button id="appRetry" class="ghost">Retry</button><button id="refreshView" class="ghost">Refresh this view</button><button id="dismissError" class="ghost">Dismiss</button></div></div>
+
+  <!-- ================= JOURNAL TAB ================= -->
+  <section id="tab-journal" class="tab-panel">
+
+    <div class="lock-screen" id="journalLockScreen">
+      <div class="card center" style="max-width:320px;margin:40px auto;">
+        <div class="lock-icon">🔒</div>
+        <h2 style="margin:10px 0 4px;">This page is just for you</h2>
+        <p id="passphraseHelp" class="lead">Your Journal and Memories are private, encrypted pages.</p>
+        <input type="password" id="journalPinInput" class="pin-input" autocomplete="current-password" aria-label="Journal passphrase" placeholder="Your passphrase">
+        <div id="confirmPassphraseWrap" hidden><label for="confirmPassphrase">Confirm your passphrase</label><input id="confirmPassphrase" class="pin-input" type="password" autocomplete="new-password"></div><p class="privacy-caption">Journal and Memories are encrypted on this device. Forgetting your passphrase prevents recovery. Planner, Reflect, Spin, and Passport stay unencrypted locally.</p><div class="pin-error" id="pinError" role="alert"></div>
+        <button class="primary" id="unlockJournalBtn" style="margin-top:10px;">Unlock</button>
+      </div>
+    </div>
+
+    <div id="journalContent" style="display:none;">
+      <div class="card">
+        <div class="eyebrow">Dear Diary</div>
+        <h2 style="margin:4px 0 2px;">Your little secret journal 🔐</h2>
+        <p class="lead">One page per day. A mood, a few words, a moment to remember.</p>
+        <button class="ghost" id="lockJournalBtn" style="margin-top:10px;">🔒 Lock journal now</button>
+      </div>
+
+      <div class="card" style="padding:18px;">
+        <div class="planner-nav">
+          <button class="ghost" id="prevJDayBtn">‹ Prev</button>
+          <div class="day-label-big">
+            <div class="day-name-big" id="jDayNameBig"></div>
+            <div class="day-num-big" id="jDayNumBig"></div>
+          </div>
+          <button class="ghost" id="nextJDayBtn">Next ›</button>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
+          <button class="ghost" id="todayJBtn">Today</button>
+          <button class="ghost" id="openCalendarJBtn">🗓 Jump to date</button>
+        </div>
+      </div>
+
+      <div class="calendar-overlay" id="calendarOverlayJournal">
+        <div class="calendar-popup">
+          <div class="calendar-popup-head">
+            <button class="ghost small" id="calPrevMonthJ">‹</button>
+            <div class="calendar-month-label" id="calMonthLabelJ"></div>
+            <button class="ghost small" id="calNextMonthJ">›</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          </div>
+          <div class="calendar-days" id="calendarDaysJ"></div>
+          <button class="ghost" id="closeCalendarJBtn" style="margin:12px auto 0;display:block;">Close</button>
+        </div>
+      </div>
+
+      <div class="mood-row" id="moodRow"></div>
+
+      <div class="journal-toolbar">
+        <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+        <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+        <button class="fmt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+        <button class="fmt-btn" id="highlightNoteBtn" title="Highlight selected text and attach a note">🖍 Highlight + note</button>
+        <select id="fontPicker" class="font-picker">
+          <option value="'Caveat', cursive">Caveat</option>
+          <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
+          <option value="'Homemade Apple', cursive">Homemade Apple</option>
+          <option value="'Patrick Hand', cursive">Patrick Hand</option>
+          <option value="'Indie Flower', cursive">Indie Flower</option>
+        </select>
+      </div>
+
+      <div class="journal-page">
+        <div class="washi washi-a"></div>
+        <div class="washi washi-b"></div>
+        <div class="journal-stamp" id="journalStamp"></div>
+        <div class="journal-page-inner">
+          <div id="journalText" class="journal-textarea" contenteditable="false" data-placeholder="Dear diary, today..."></div>
+        </div>
+      </div>
+
+      <section class="journal-memory-section" aria-labelledby="journalMemoryHeading">
+        <div class="memory-heading">
+          <div class="eyebrow">Little Moments</div>
+          <h3 id="journalMemoryHeading">Photos from this day</h3>
+        </div>
+        <div id="memoryError" class="memory-error" role="alert" hidden>
+          <span id="memoryErrorText"></span>
+          <button class="ghost small" id="memoryRetryBtn">Try again</button>
+        </div>
+        <div class="memory-page">
+          <div class="memory-photo-panel">
+            <div id="memoryGallery" class="memory-gallery" role="region" aria-roledescription="carousel" aria-label="Photos for this Journal date" tabindex="0"></div>
+            <div class="memory-pagination" id="memoryPagination" hidden>
+              <button class="ghost small" id="memoryPrevPhoto" aria-label="Previous photo">&#8249;</button>
+              <span id="memoryCounter" aria-live="polite" aria-atomic="true"></span>
+              <button class="ghost small" id="memoryNextPhoto" aria-label="Next photo">&#8250;</button>
+            </div>
+          </div>
+          <div class="memory-note-panel">
+            <div class="memory-caption">
+              <label class="memory-sr-only" for="memoryNote">A little thing to remember about this day</label>
+              <textarea id="memoryNote" placeholder="a little thing to remember&#8230;" rows="4" maxlength="500" aria-describedby="memoryNoteCount"></textarea>
+              <div id="memoryNoteCount" class="memory-note-count">0 / 500</div>
+            </div>
+            <div class="memory-upload-row">
+              <label class="upload-label">Add photos<input type="file" id="memoryImageInput" accept="image/*" multiple></label>
+              <button class="ghost small" id="memoryRemovePhoto" aria-label="Remove the active photo" hidden>Remove photo</button>
+            </div>
+            <p class="memory-status" id="memoryStatus" role="status"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="noteBubbleModal">
+    <div class="modal-box center">
+      <div class="modal-icon">📌</div>
+      <h3 style="margin:8px 0 4px;">Note on this highlight</h3>
+      <textarea id="noteBubbleText" placeholder="Write your note..." style="min-height:80px;"></textarea>
+      <div class="action-row" style="margin-top:14px;">
+        <button class="ghost" id="noteBubbleDelete">Remove highlight</button>
+        <button class="primary" id="noteBubbleSave">Save</button>
+      </div>
+      <button class="ghost" id="noteBubbleCancel" style="margin-top:10px;font-size:12px;">Close</button>
+    </div>
+  </div>
+
+  <!-- ================= REFLECT TAB ================= -->
+  <section id="tab-reflect" class="tab-panel">
+    <div class="card">
+      <div class="eyebrow">Self-Reflection</div>
+      <h2 style="margin:4px 0 2px;">A little check-in with yourself 🌷</h2>
+      <p class="lead">Quick touches, not another journal entry — gratitude and a daily prompt.</p>
+    </div>
+
+    <div class="card" style="padding:18px;">
+      <div class="planner-nav">
+        <button class="ghost" id="prevRDayBtn">‹ Prev</button>
+        <div class="day-label-big">
+          <div class="day-name-big" id="rDayNameBig"></div>
+          <div class="day-num-big" id="rDayNumBig"></div>
+        </div>
+        <button class="ghost" id="nextRDayBtn">Next ›</button>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
+        <button class="ghost" id="todayRBtn">Today</button>
+        <button class="ghost" id="openCalendarRBtn">🗓 Jump to date</button>
+      </div>
+    </div>
+
+    <div class="calendar-overlay" id="calendarOverlayReflect">
+      <div class="calendar-popup">
+        <div class="calendar-popup-head">
+          <button class="ghost small" id="calPrevMonthR">‹</button>
+          <div class="calendar-month-label" id="calMonthLabelR"></div>
+          <button class="ghost small" id="calNextMonthR">›</button>
+        </div>
+        <div class="calendar-weekdays">
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+        <div class="calendar-days" id="calendarDaysR"></div>
+        <button class="ghost" id="closeCalendarRBtn" style="margin:12px auto 0;display:block;">Close</button>
+      </div>
+    </div>
+
+    <div class="streak-row" id="streakRow"></div>
+
+    <div class="quote-card" id="quoteCard"></div>
+
+    <div class="card">
+      <div class="eyebrow">Today's Prompt</div>
+      <h3 class="prompt-text" id="promptText" style="margin:6px 0 12px;"></h3>
+      <textarea id="promptAnswer" placeholder="Answer however feels right..." style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Gratitude List</div>
+      <div class="gratitude-add-row">
+        <input type="text" id="gratitudeInput" placeholder="I'm grateful for...">
+        <button class="primary" id="gratitudeAddBtn">＋ Add</button>
+      </div>
+      <div id="gratitudeList"></div>
+    </div>
+  </section>
+
+  <!-- ================= PLANNER TAB ================= -->
+  <section id="tab-planner" class="tab-panel active">
+    <div class="card">
+      <div class="eyebrow">Daily Planner</div>
+      <h2 style="margin:4px 0 2px;">One day at a time 🗓️</h2>
+      <p class="lead">Add your to-dos for today, mark what matters most, and check things off as you go.</p>
+    </div>
+    <div class="card" style="padding:18px;">
+      <div class="planner-nav">
+        <button class="ghost" id="prevDayBtn">‹ Prev</button>
+        <div class="day-label-big">
+          <div class="day-name-big" id="dayNameBig"></div>
+          <div class="day-num-big" id="dayNumBig"></div>
+        </div>
+        <button class="ghost" id="nextDayBtn">Next ›</button>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
+        <button class="ghost" id="todayBtn">Today</button>
+        <button class="ghost" id="openCalendarBtn">🗓 Jump to date</button>
+      </div>
+    </div>
+
+    <div class="calendar-overlay" id="calendarOverlay">
+      <div class="calendar-popup">
+        <div class="calendar-popup-head">
+          <button class="ghost small" id="calPrevMonth">‹</button>
+          <div class="calendar-month-label" id="calMonthLabel"></div>
+          <button class="ghost small" id="calNextMonth">›</button>
+        </div>
+        <div class="calendar-weekdays">
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+        <button class="ghost" id="closeCalendarBtn" style="margin:12px auto 0;display:block;">Close</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-text" id="progressText"></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+      </div>
+
+      <div class="add-task-single">
+        <input type="text" id="newTaskText" placeholder="Add a to-do for this day...">
+        <textarea id="newTaskNotes" placeholder="Optional notes (details, links, reminders...)"></textarea>
+        <div class="add-task-controls">
+          <button class="star-toggle" id="importantToggle">☆ Mark as important</button>
+          <select id="repeatSelect" class="repeat-select">
+            <option value="none">Doesn't repeat</option>
+            <option value="daily">Repeats daily</option>
+            <option value="weekly">Repeats weekly</option>
+          </select>
+          <button class="primary" id="addTaskBtn">＋ Add to-do</button>
+        </div>
+      </div>
+
+      <div class="task-list-single" id="dayTaskList"></div>
+    </div>
+
+    <div class="modal-overlay" id="recurringChoiceModal">
+      <div class="modal-box center">
+        <div class="modal-icon">🔁</div>
+        <h3 style="margin:8px 0 4px;">This is a repeating to-do</h3>
+        <p class="lead" id="recurringChoiceText">What would you like to do?</p>
+        <div class="action-row" style="margin-top:14px;">
+          <button class="ghost" id="choiceJustThis">Just this day</button>
+          <button class="primary" id="choiceAllFuture">This & all future</button>
+        </div>
+        <button class="ghost" id="choiceCancel" style="margin-top:10px;font-size:12px;">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHEEL TAB ================= -->
+  <section id="tab-wheel" class="tab-panel">
+    <div class="card center" id="wheelCard">
+      <!-- content injected by JS -->
+    </div>
+  </section>
+
+  <!-- ================= PASSPORT TAB ================= -->
+  <section id="tab-passport" class="tab-panel">
+    <div class="card">
+      <div class="eyebrow">My Solo Date Passport</div>
+      <h2 style="margin:4px 0 2px;">Every page is a little proof you showed up for you 🎀</h2>
+      <p class="lead">Browse your past dates, or switch to edit mode to add notes, photos, ratings, and to-dos.</p>
+      <div class="mode-toggle">
+        <button class="mode-btn" data-mode="view">👀 View</button>
+        <button class="mode-btn" data-mode="edit">✏️ Edit</button>
+      </div>
+    </div>
+    <div id="passportList"></div>
+  </section>
+
+  <div class="modal-overlay" id="photoLightbox">
+    <div class="lightbox-inner">
+      <img id="lightboxImg" src="" alt="">
+      <button class="ghost" id="lightboxClose" style="margin-top:14px;">Close</button>
+    </div>
+  </div>
+
+</main><footer class="app-footer"><span class="save-state" id="saveState" role="status" aria-live="polite">Your little space, on this device</span><p id="offlineState">Made for quiet moments. Your pages stay in this browser.</p><button id="checkUpdates">Check for updates</button></footer>
+
+<div class="save-flash" id="saveFlash">Saved ✓</div>
+
+</body>
+</html>
