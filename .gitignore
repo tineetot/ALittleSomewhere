@@ -1,0 +1,9 @@
+.tools/
+node-runtime.zip
+node-shasums.txt
+**/node_modules/
+**/dist/
+**/test-results/
+**/playwright-report/
+
+release/

@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Little Somewhere 🎀</title>
-<link rel="manifest" href="./manifest.json">
+<title>A Little Somewhere</title>
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#e2789b">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="A Little Somewhere">
 
-  <script type="module" crossorigin src="./assets/index-BpcbMT0Y.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BYn6UmbI.css">
 </head>
 <body><a class="skip-link" href="#mainContent">Skip to your pages</a>
 
+<div id="scrapbookBackdrop" aria-hidden="true"></div>
 <div id="ambient"></div>
 <svg class="corner tl" viewBox="0 0 100 100"><path d="M0,0 Q50,0 50,50 Q0,50 0,0" fill="none" stroke="#f0bfd2" stroke-width="2"/><circle cx="8" cy="8" r="4" fill="#f9cddd"/></svg>
 <svg class="corner tr" viewBox="0 0 100 100"><path d="M0,0 Q50,0 50,50 Q0,50 0,0" fill="none" stroke="#f0bfd2" stroke-width="2"/><circle cx="8" cy="8" r="4" fill="#f9cddd"/></svg>
 
 <header class="top">
-  <div class="brand"><span class="seal"><img src="./icon-192.png" alt=""></span><span class="display italic">A Little Somewhere</span></div>
+  <div class="brand"><span class="seal"><img src="/icon-192.png" alt=""></span><span class="display italic">A Little Somewhere</span></div>
   <nav class="tabs" aria-label="Your scrapbook sections">
     <button class="tab" data-tab="journal">Journal</button>
     <button class="tab" data-tab="reflect">Reflect</button>
@@ -31,28 +30,37 @@
   </nav>
 </header>
 
-<main id="mainContent"><div id="updateNotice" class="app-message" hidden>A fresh version is ready. Save your pages, then <button id="updateApp" class="ghost">Update app</button></div><div id="appError" class="app-message" role="alert" hidden><span id="appErrorText"></span><div class="flex flex-wrap gap-2 mt-2"><button id="appRetry" class="ghost">Retry</button><button id="refreshView" class="ghost">Refresh this view</button><button id="dismissError" class="ghost">Dismiss</button></div></div>
+<main id="mainContent"><div id="updateNotice" class="app-message" hidden>Update available. <button id="updateApp" class="ghost">Update app</button></div><div id="appError" class="app-message" role="alert" hidden><span id="appErrorText"></span><div class="flex flex-wrap gap-2 mt-2"><button id="appRetry" class="ghost">Retry</button><button id="refreshView" class="ghost">Refresh this view</button><button id="dismissError" class="ghost">Dismiss</button></div></div>
 
+
+<div class="desk-toolbar"><details id="decorateDrawer" class="decorate-drawer">
+<summary>Decorate <span aria-hidden="true">＋</span></summary><div class="decorate-content">
+<button id="closeDecorate" class="text-button close-decorate">Done</button>
+<fieldset class="paper-settings"><legend>Background</legend><div class="paper-choices">
+<button type="button" data-paper="paper" class="paper-choice" aria-pressed="true"><span class="paper-swatch swatch-paper" aria-hidden="true"></span>Paper</button><button type="button" data-paper="gingham" class="paper-choice" aria-pressed="false"><span class="paper-swatch swatch-gingham" aria-hidden="true"></span>Gingham</button><button type="button" data-paper="dots" class="paper-choice" aria-pressed="false"><span class="paper-swatch swatch-dots" aria-hidden="true"></span>Dots</button><button type="button" data-paper="floral" class="paper-choice" aria-pressed="false"><span class="paper-swatch swatch-floral" aria-hidden="true"></span>Floral</button>
+</div></fieldset>
+<section id="journalDecorationTools" aria-label="Journal stickers" hidden><h3>Stickers</h3><div id="stickerTray" class="sticker-tray"></div><p id="stickerHint" class="control-hint">Choose a sticker to place on this page.</p><div class="sticker-controls"><button id="arrangeStickers" class="ghost" aria-pressed="false">Arrange stickers</button><div id="selectedStickerTools" hidden><label for="stickerSize">Size</label><input id="stickerSize" type="range" min="48" max="144" value="80"><label for="stickerRotation">Rotate</label><input id="stickerRotation" type="range" min="-180" max="180" value="-8"><button id="removeSticker" class="text-button">Remove sticker</button></div></div></section>
+<div class="update-controls"><button id="checkUpdates" class="text-button">Check for updates</button><p id="offlineState" role="status" hidden></p></div>
+</div></details></div>
   <!-- ================= JOURNAL TAB ================= -->
   <section id="tab-journal" class="tab-panel">
 
     <div class="lock-screen" id="journalLockScreen">
       <div class="card center" style="max-width:320px;margin:40px auto;">
-        <div class="lock-icon">🔒</div>
-        <h2 style="margin:10px 0 4px;">This page is just for you</h2>
+        <div class="lock-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 22v-8a9 9 0 0 1 18 0v8M11 22h26v20H11Z"/><circle cx="24" cy="31" r="2"/><path d="M24 33v3"/></svg></div>
+        <h2 style="margin:10px 0 4px;">Your journal</h2>
         <p id="passphraseHelp" class="lead">Your Journal and Memories are private, encrypted pages.</p>
-        <input type="password" id="journalPinInput" class="pin-input" autocomplete="current-password" aria-label="Journal passphrase" placeholder="Your passphrase">
-        <div id="confirmPassphraseWrap" hidden><label for="confirmPassphrase">Confirm your passphrase</label><input id="confirmPassphrase" class="pin-input" type="password" autocomplete="new-password"></div><p class="privacy-caption">Journal and Memories are encrypted on this device. Forgetting your passphrase prevents recovery. Planner, Reflect, Spin, and Passport stay unencrypted locally.</p><div class="pin-error" id="pinError" role="alert"></div>
+        <div class="passphrase-field"><label for="journalPinInput">Your passphrase</label><input type="password" id="journalPinInput" class="pin-input" autocomplete="current-password" aria-label="Journal passphrase" placeholder="At least 12 characters" aria-describedby="passphraseHelp"></div>
+        <div id="confirmPassphraseWrap" class="passphrase-field" hidden><label for="confirmPassphrase">Confirm your passphrase</label><input id="confirmPassphrase" class="pin-input" type="password" autocomplete="new-password" placeholder="Type your passphrase again" aria-describedby="passphraseHelp"></div><p class="privacy-caption">Journal and Memories are encrypted. A forgotten passphrase cannot be recovered. Other sections are saved unencrypted in this browser.</p><div class="pin-error" id="pinError" role="alert"></div>
         <button class="primary" id="unlockJournalBtn" style="margin-top:10px;">Unlock</button>
       </div>
     </div>
 
     <div id="journalContent" style="display:none;">
       <div class="card">
-        <div class="eyebrow">Dear Diary</div>
-        <h2 style="margin:4px 0 2px;">Your little secret journal 🔐</h2>
-        <p class="lead">One page per day. A mood, a few words, a moment to remember.</p>
-        <button class="ghost" id="lockJournalBtn" style="margin-top:10px;">🔒 Lock journal now</button>
+        <div class="eyebrow">Notebook / 01</div>
+        <h2 style="margin:4px 0 2px;">Journal</h2>
+        <button class="ghost" id="lockJournalBtn" style="margin-top:10px;">Lock journal</button>
       </div>
 
       <div class="card" style="padding:18px;">
@@ -66,7 +74,7 @@
         </div>
         <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
           <button class="ghost" id="todayJBtn">Today</button>
-          <button class="ghost" id="openCalendarJBtn">🗓 Jump to date</button>
+          <button class="ghost" id="openCalendarJBtn">Choose date</button>
         </div>
       </div>
 
@@ -91,7 +99,7 @@
         <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
         <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
         <button class="fmt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
-        <button class="fmt-btn" id="highlightNoteBtn" title="Highlight selected text and attach a note">🖍 Highlight + note</button>
+        <button class="fmt-btn" id="highlightNoteBtn" title="Highlight selected text and attach a note">Highlight + note</button>
         <select id="fontPicker" class="font-picker">
           <option value="'Caveat', cursive">Caveat</option>
           <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
@@ -101,19 +109,20 @@
         </select>
       </div>
 
-      <div class="journal-page">
+      <div class="journal-page" id="journalPaper">
         <div class="washi washi-a"></div>
         <div class="washi washi-b"></div>
         <div class="journal-stamp" id="journalStamp"></div>
         <div class="journal-page-inner">
           <div id="journalText" class="journal-textarea" contenteditable="false" data-placeholder="Dear diary, today..."></div>
         </div>
+        <div id="stickerLayer" class="sticker-layer" role="group" aria-label="Page stickers"></div>
       </div>
 
       <section class="journal-memory-section" aria-labelledby="journalMemoryHeading">
         <div class="memory-heading">
-          <div class="eyebrow">Little Moments</div>
-          <h3 id="journalMemoryHeading">Photos from this day</h3>
+          <div class="eyebrow">Contact sheet</div>
+          <h3 id="journalMemoryHeading">Memories</h3>
         </div>
         <div id="memoryError" class="memory-error" role="alert" hidden>
           <span id="memoryErrorText"></span>
@@ -130,13 +139,14 @@
           </div>
           <div class="memory-note-panel">
             <div class="memory-caption">
-              <label class="memory-sr-only" for="memoryNote">A little thing to remember about this day</label>
-              <textarea id="memoryNote" placeholder="a little thing to remember&#8230;" rows="4" maxlength="500" aria-describedby="memoryNoteCount"></textarea>
+              <label class="memory-sr-only" for="memoryNote">Photo caption</label>
+              <textarea id="memoryNote" placeholder="Caption…" rows="4" maxlength="500" aria-describedby="memoryNoteCount"></textarea>
               <div id="memoryNoteCount" class="memory-note-count">0 / 500</div>
             </div>
             <div class="memory-upload-row">
               <label class="upload-label">Add photos<input type="file" id="memoryImageInput" accept="image/*" multiple></label>
               <button class="ghost small" id="memoryRemovePhoto" aria-label="Remove the active photo" hidden>Remove photo</button>
+              <label id="memoryFrameControl" class="frame-control" hidden>Frame<select id="memoryFrame" aria-label="Memory photo frame"><option value="print">Print border</option><option value="tape">Taped corners</option><option value="scallop">Scalloped</option></select></label>
             </div>
             <p class="memory-status" id="memoryStatus" role="status"></p>
           </div>
@@ -147,7 +157,6 @@
 
   <div class="modal-overlay" id="noteBubbleModal">
     <div class="modal-box center">
-      <div class="modal-icon">📌</div>
       <h3 style="margin:8px 0 4px;">Note on this highlight</h3>
       <textarea id="noteBubbleText" placeholder="Write your note..." style="min-height:80px;"></textarea>
       <div class="action-row" style="margin-top:14px;">
@@ -161,9 +170,8 @@
   <!-- ================= REFLECT TAB ================= -->
   <section id="tab-reflect" class="tab-panel">
     <div class="card">
-      <div class="eyebrow">Self-Reflection</div>
-      <h2 style="margin:4px 0 2px;">A little check-in with yourself 🌷</h2>
-      <p class="lead">Quick touches, not another journal entry — gratitude and a daily prompt.</p>
+      <div class="eyebrow">Notebook / 02</div>
+      <h2 style="margin:4px 0 2px;">Reflect</h2>
     </div>
 
     <div class="card" style="padding:18px;">
@@ -177,7 +185,7 @@
       </div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
         <button class="ghost" id="todayRBtn">Today</button>
-        <button class="ghost" id="openCalendarRBtn">🗓 Jump to date</button>
+        <button class="ghost" id="openCalendarRBtn">Choose date</button>
       </div>
     </div>
 
@@ -201,7 +209,7 @@
     <div class="quote-card" id="quoteCard"></div>
 
     <div class="card">
-      <div class="eyebrow">Today's Prompt</div>
+      <div class="eyebrow">Daily prompt</div>
       <h3 class="prompt-text" id="promptText" style="margin:6px 0 12px;"></h3>
       <textarea id="promptAnswer" placeholder="Answer however feels right..." style="min-height:80px;"></textarea>
     </div>
@@ -219,9 +227,8 @@
   <!-- ================= PLANNER TAB ================= -->
   <section id="tab-planner" class="tab-panel active">
     <div class="card">
-      <div class="eyebrow">Daily Planner</div>
-      <h2 style="margin:4px 0 2px;">One day at a time 🗓️</h2>
-      <p class="lead">Add your to-dos for today, mark what matters most, and check things off as you go.</p>
+      <div class="eyebrow">Notebook / 03</div>
+      <h2 style="margin:4px 0 2px;">Planner</h2>
     </div>
     <div class="card" style="padding:18px;">
       <div class="planner-nav">
@@ -234,7 +241,7 @@
       </div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
         <button class="ghost" id="todayBtn">Today</button>
-        <button class="ghost" id="openCalendarBtn">🗓 Jump to date</button>
+        <button class="ghost" id="openCalendarBtn">Choose date</button>
       </div>
     </div>
 
@@ -260,8 +267,8 @@
       </div>
 
       <div class="add-task-single">
-        <input type="text" id="newTaskText" placeholder="Add a to-do for this day...">
-        <textarea id="newTaskNotes" placeholder="Optional notes (details, links, reminders...)"></textarea>
+        <input type="text" id="newTaskText" placeholder="New task">
+        <textarea id="newTaskNotes" placeholder="Notes (optional)"></textarea>
         <div class="add-task-controls">
           <button class="star-toggle" id="importantToggle">☆ Mark as important</button>
           <select id="repeatSelect" class="repeat-select">
@@ -269,7 +276,7 @@
             <option value="daily">Repeats daily</option>
             <option value="weekly">Repeats weekly</option>
           </select>
-          <button class="primary" id="addTaskBtn">＋ Add to-do</button>
+          <button class="primary" id="addTaskBtn">＋ Add task</button>
         </div>
       </div>
 
@@ -278,9 +285,8 @@
 
     <div class="modal-overlay" id="recurringChoiceModal">
       <div class="modal-box center">
-        <div class="modal-icon">🔁</div>
         <h3 style="margin:8px 0 4px;">This is a repeating to-do</h3>
-        <p class="lead" id="recurringChoiceText">What would you like to do?</p>
+        <p class="lead" id="recurringChoiceText">Delete this date or end the series?</p>
         <div class="action-row" style="margin-top:14px;">
           <button class="ghost" id="choiceJustThis">Just this day</button>
           <button class="primary" id="choiceAllFuture">This & all future</button>
@@ -300,12 +306,11 @@
   <!-- ================= PASSPORT TAB ================= -->
   <section id="tab-passport" class="tab-panel">
     <div class="card">
-      <div class="eyebrow">My Solo Date Passport</div>
-      <h2 style="margin:4px 0 2px;">Every page is a little proof you showed up for you 🎀</h2>
-      <p class="lead">Browse your past dates, or switch to edit mode to add notes, photos, ratings, and to-dos.</p>
+      <div class="eyebrow">Notebook / 05</div>
+      <h2 style="margin:4px 0 2px;">Passport</h2>
       <div class="mode-toggle">
-        <button class="mode-btn" data-mode="view">👀 View</button>
-        <button class="mode-btn" data-mode="edit">✏️ Edit</button>
+        <button class="mode-btn" data-mode="view">View</button>
+        <button class="mode-btn" data-mode="edit">Edit</button>
       </div>
     </div>
     <div id="passportList"></div>
@@ -318,9 +323,10 @@
     </div>
   </div>
 
-</main><footer class="app-footer"><span class="save-state" id="saveState" role="status" aria-live="polite">Your little space, on this device</span><p id="offlineState">Made for quiet moments. Your pages stay in this browser.</p><button id="checkUpdates">Check for updates</button></footer>
+</main><div class="save-state" id="saveState" role="status" aria-live="polite"></div>
 
 <div class="save-flash" id="saveFlash">Saved ✓</div>
-
+
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>

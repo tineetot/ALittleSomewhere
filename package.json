@@ -1,0 +1,35 @@
+{
+  "name": "a-little-somewhere",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "check": "tsc --noEmit",
+    "build": "npm run check && vite build && node scripts/build-sw.mjs && node scripts/verify-release.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:browser": "playwright test"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@fontsource/caveat": "^5.3.0",
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/homemade-apple": "^5.3.0",
+    "@fontsource/indie-flower": "^5.3.0",
+    "@fontsource/patrick-hand": "^5.3.0",
+    "@fontsource/quicksand": "^5.3.0",
+    "@fontsource/shadows-into-light": "^5.3.0",
+    "dompurify": "^3.4.17"
+  }
+}

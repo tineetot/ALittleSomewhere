@@ -61,3 +61,7 @@ Through this project, I am practicing:
 **A Little Somewhere is an ongoing personal project.** I am continuing to improve its functionality, privacy controls, responsiveness, and visual consistency as I learn.
 
 The goal is to create a useful everyday application that feels personal while helping me grow as a developer.
+
+## Development
+
+This repository now includes the editable Vite and TypeScript project. See [DEVELOPMENT.md](DEVELOPMENT.md) for local run, build, test and Git commands. Vercel builds the production site into dist/ using vercel.json. The latest source includes the stationery design and calendar spacing fix.
