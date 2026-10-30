@@ -1,3 +1,4 @@
+import { initLanding } from './landing';
 import './styles.css';
 import './stationery.css';
 import { initBackdrop } from './backdrop';
@@ -25,6 +26,7 @@ document.querySelectorAll<HTMLButtonElement>('nav.tabs button').forEach(button=>
 on('refreshView','click',async()=>{await flushAll();await renderActive();});
 window.addEventListener('beforeunload',e=>{if(privatePending()||reflectPending()||passportPending()){e.preventDefault();e.returnValue='';}});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')void attempt(flushAll);});
+initLanding(flushAll);
 void attempt(renderActive);
 if(import.meta.env.PROD&&'serviceWorker' in navigator){
   let registration:ServiceWorkerRegistration|undefined;

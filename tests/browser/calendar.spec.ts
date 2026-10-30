@@ -5,7 +5,7 @@ for(const width of [390,1440])test(`Calendar weeks stay aligned in every month a
   await page.setViewportSize({width,height:1000});
   await page.clock.setFixedTime(new Date('2026-10-29T12:00:00'));
   await page.emulateMedia({reducedMotion:'reduce'});
-  await page.goto('/');
+  await page.goto('/#space');
   for(const section of [
     {tab:'Planner',suffix:'',overlay:'calendarOverlay'},
     {tab:'Reflect',suffix:'R',overlay:'calendarOverlayReflect'},

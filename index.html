@@ -12,8 +12,10 @@
 <meta name="apple-mobile-web-app-title" content="A Little Somewhere">
 
 </head>
-<body><a class="skip-link" href="#mainContent">Skip to your pages</a>
+<body class="on-cover"><a class="skip-link" href="#mainContent">Skip to your pages</a>
 
+<section id="landing" aria-label="Welcome to A Little Somewhere"></section>
+<div id="appShell" hidden inert>
 <div id="scrapbookBackdrop" aria-hidden="true"></div>
 <div id="ambient"></div>
 <svg class="corner tl" viewBox="0 0 100 100"><path d="M0,0 Q50,0 50,50 Q0,50 0,0" fill="none" stroke="#f0bfd2" stroke-width="2"/><circle cx="8" cy="8" r="4" fill="#f9cddd"/></svg>
@@ -21,7 +23,8 @@
 
 <header class="top">
   <div class="brand"><span class="seal"><img src="/icon-192.png" alt=""></span><span class="display italic">A Little Somewhere</span></div>
-  <nav class="tabs" aria-label="Your scrapbook sections">
+  <button id="returnCover" type="button">Diary cover</button>
+<nav class="tabs" aria-label="Your scrapbook sections">
     <button class="tab" data-tab="journal">Journal</button>
     <button class="tab" data-tab="reflect">Reflect</button>
     <button class="tab active" data-tab="planner">Planner</button>
@@ -327,6 +330,8 @@
 
 <div class="save-flash" id="saveFlash">Saved ✓</div>
 
+</div>
+<noscript>Please enable JavaScript to open your diary.</noscript>
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
