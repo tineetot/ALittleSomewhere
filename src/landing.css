@@ -32,7 +32,7 @@ body.on-cover{background:var(--blush)}body.on-cover #scrapbookBackdrop{display:n
 .cover-border{justify-content:center;gap:24px;border-style:dashed}.cover-border>div{margin:0;font-weight:500}.cover-border svg{margin:0}
 .diary-inside{justify-content:center;gap:38px}.diary-inside h2{margin:0;font-weight:500;color:var(--rose-deep)}
 .desk-note svg{display:block;width:100%;height:75px}.desk-note[aria-pressed=true] svg{transform:rotate(12deg)}
-@media(min-width:1100px){.welcome-intro{position:absolute}}
+@media(min-width:1100px){.welcome-intro{position:absolute}.diary-desk{height:460px}.welcome-actions{position:absolute;top:59%;left:9%;width:33%;margin:0;align-items:flex-start;z-index:2}}
 @media(max-width:600px){.welcome-mast .brand{font-size:21px;gap:9px}.welcome-mast .brand .seal{width:34px;height:34px}.desk-note svg{height:55px}.cover-border{gap:20px}.diary-inside{gap:32px}}
 .cover-border>.display{color:inherit}
 

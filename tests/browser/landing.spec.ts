@@ -1,4 +1,10 @@
 import { test, expect } from '@playwright/test';
+test('Desktop diary button fits in a short default-zoom viewport',async({page})=>{
+await page.setViewportSize({width:1440,height:650});await page.goto('/');
+const button=page.locator('#openDiary'),bounds=await button.boundingBox();
+expect(bounds).not.toBeNull();expect(bounds!.y+bounds!.height).toBeLessThanOrEqual(650);
+expect(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1)).toBe(true);
+});
 for(const width of [390,768,1440])test(`Diary entrance and saved app navigation at ${width}px`,async({page})=>{
 await page.setViewportSize({width,height:900});await page.goto('/');
 await expect(page.locator('#landing')).toBeVisible();await expect(page.locator('#appShell')).toBeHidden();

@@ -100,3 +100,7 @@ Scenery verification completed: strict TypeScript, production build/release chec
 
 Opened-diary alignment and flower fill: removed the 65px opening translation and mobile 35px override so the page stays centred in its desk. The flower stem now has no fill; each leaf is a separate closed filled path, removing the accidental green wedge across the stem. Browser entrance geometry now checks mobile, tablet and desktop. Verification pending.
 Alignment/flower verification complete: typecheck, production build/release verification, 11 logic tests and all 31 Edge browser tests pass. Open notebook centre aligns with desk centre within 1px at 390, 768 and 1440px. Reviewed tablet open-page screenshot and corrected leaf/stem rendering. No commit, push or deployment.
+
+## Desktop diary entrance fit — 30 October 2026
+
+Moved the Open diary button beneath the welcome headline on desktop and reduced the desk's reserved height without changing the mobile layout or artwork sizes. Added a real-browser regression check confirming the button and full landing page fit a 1440×650 viewport at default zoom. TypeScript, production build/release checks, 11 logic tests and all 32 Microsoft Edge browser tests pass. No commit, push or deployment.
