@@ -16,17 +16,17 @@
 /* The existing paper-and-ink palette stays central; utilities support layout. */
 :root{--shadow:0 4px 18px rgba(92,67,83,.06);--plum-soft:#78616e;}
 body{background:radial-gradient(ellipse at 0 0,#fde6ee80,transparent 48%),var(--blush);line-height:1.6;}
-header.top{position:relative;background:var(--blush);backdrop-filter:none;padding:24px max(22px,calc((100vw - 1080px)/2));gap:24px;border-bottom:1px solid var(--lace);}
+header.top{position:relative;background:var(--blush);backdrop-filter:none;padding:12px max(20px,calc((100vw - 1240px)/2));gap:10px 24px;border-bottom:1px solid var(--lace);}
 .brand{font-size:23px;white-space:nowrap;}.brand .seal{width:42px;height:42px;}
 nav.tabs{background:transparent;border-radius:0;box-shadow:none;padding:0;gap:3px;}
 nav.tabs button{border-radius:8px 8px 2px 2px;font-size:13px;padding:10px 16px;color:var(--plum);}
 nav.tabs button.active{background:var(--pale);box-shadow:inset 0 -3px var(--rose-deep);color:var(--rose-deep);}
-main{max-width:940px;padding:36px 26px 64px;}
+main{max-width:1160px;padding:18px 24px 48px;}
 h2{font-size:clamp(22px,3vw,29px);line-height:1.35;}h3{line-height:1.45;}
 p.lead{max-width:60ch;line-height:1.75;font-size:14px;margin-bottom:8px;}.center p.lead{margin-left:auto;margin-right:auto;}
-.tab-panel>.card:first-child{padding:8px 0 24px;border:0;box-shadow:none;background:transparent;border-radius:0;margin-bottom:12px;}
+.tab-panel>.card:first-child{padding:4px 0 14px;border:0;box-shadow:none;background:transparent;border-radius:0;margin-bottom:8px;}
 .tab-panel>.card:first-child::before{display:none;}
-.card{padding:24px 28px;border-radius:14px;margin-bottom:20px;}.card::before{border-radius:10px;}
+.card{padding:18px 22px;border-radius:14px;margin-bottom:14px;}.card::before{border-radius:10px;}
 .eyebrow{color:#a23d63;font-size:10px;letter-spacing:2.3px;}
 .planner-nav{gap:16px;}.day-num-big{font-size:24px;}.day-name-big{color:#a23d63;font-size:11px;}
 button.primary{background:var(--rose-deep);color:var(--cream);font-size:13px;box-shadow:0 2px 5px #5c435312;}
@@ -67,6 +67,6 @@ body{isolation:isolate;}
 header.top,.app-footer{position:relative;z-index:1;}
 @media(max-width:640px){#scrapbookBackdrop::before{background-size:290px auto;opacity:.4;}}
 @media(prefers-reduced-motion:reduce){#scrapbookBackdrop{background:radial-gradient(ellipse at 80% 20%,#f9cddd35,transparent 65%);}#scrapbookBackdrop::before{transform:none;}}
-@media(min-width:1050px){header.top{display:grid;grid-template-columns:1fr auto;}.tab-panel{max-width:850px;margin:auto;}}
+@media(min-width:1050px){header.top{display:grid;grid-template-columns:1fr auto;}.tab-panel{max-width:1080px;margin:auto;}}
 @media(max-width:640px){header.top{padding:20px 16px 0;gap:16px;}.brand{font-size:21px;}nav.tabs{width:100%;justify-content:space-between;}nav.tabs button{padding:10px 12px;}main{padding:24px 16px 40px;}.card{padding:20px 16px;}.planner-nav{gap:8px;}.day-label-big{order:0;flex:1;}.day-num-big{font-size:18px;}.day-name-big{font-size:9px;}.planner-nav button{font-size:12px;padding:8px 12px;}.journal-page{padding:48px 12px 20px;}.journal-textarea{padding-left:30px;background-image:linear-gradient(to right,transparent 22px,#e8b6c7 22px,#e8b6c7 23px,transparent 23px),repeating-linear-gradient(to bottom,transparent,transparent 33px,var(--lace) 33px,var(--lace) 34px);}.journal-memory-section{padding:20px 10px;}.task-actions{flex-direction:column;}.task-item-single{gap:8px;}.task-actions button{min-height:32px;}.result-name{font-size:21px;}.memory-note-panel{padding-top:0;}.gratitude-add-row{gap:6px;}.gratitude-add-row button{padding:10px 16px;}.quote-text{font-size:20px;}.app-footer{padding-left:16px;padding-right:16px;}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}.memory-caption,.memory-photo,.washi{transform:none;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}.memory-caption,.memory-photo,.memory-photo-caption,.washi{transform:none;}}

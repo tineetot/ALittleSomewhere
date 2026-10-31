@@ -11,15 +11,35 @@ import { renderSpin } from './spin';
 import { vault } from './services';
 let active='planner';
 let tabRevision=0;
+const decorateDrawer=$<HTMLDetailsElement>('decorateDrawer');
+const decorateToolbar=decorateDrawer.closest<HTMLElement>('.desk-toolbar')!;
+function positionDecorate():void{
+  const toolbar=decorateToolbar;
+  let heading:HTMLElement|null=null,lockedJournal=false;
+  if(active==='journal'){
+    const content=$('journalContent');
+    lockedJournal=content.style.display==='none';
+    heading=lockedJournal?$('journalLockScreen').querySelector<HTMLElement>('.card'):content.querySelector<HTMLElement>(':scope > .card');
+  }else if(active==='wheel')heading=document.querySelector<HTMLElement>('#wheelCard .wheel-heading-row');
+  else heading=document.querySelector<HTMLElement>(`#tab-${active} > .card:first-child`);
+  if(!heading)return;
+  document.querySelectorAll<HTMLElement>('.tab-heading-card,.wheel-heading-row,.locked-journal-heading,.journal-unlocked-heading').forEach(el=>el.classList.remove('tab-heading-card','wheel-heading-row','locked-journal-heading','journal-unlocked-heading'));
+  heading.classList.add(active==='wheel'?'wheel-heading-row':lockedJournal?'locked-journal-heading':'tab-heading-card');
+  if(active==='journal'&&!lockedJournal)heading.classList.add('journal-unlocked-heading');
+  if(toolbar.parentElement!==heading){decorateDrawer.open=false;heading.append(toolbar);}
+}
 async function renderActive():Promise<void>{
-  if(active==='journal')await openJournal();if(active==='reflect')await renderReflect();if(active==='planner')await renderPlanner();if(active==='passport')await renderPassport();if(active==='wheel')await renderSpin();
+  if(active==='journal')await openJournal();if(active==='reflect')await renderReflect();if(active==='planner')await renderPlanner();if(active==='passport')await renderPassport();if(active==='wheel')await renderSpin();positionDecorate();
 }
 export async function flushAll():Promise<void>{await Promise.all([vault.unlocked?flushJournal():Promise.resolve(),flushReflect(),flushPassport()]);}
 initUI();initJournal();initReflect();initPlanner();initPassport();void attempt(initBackdrop);
+window.addEventListener('journalviewchange',positionDecorate);window.addEventListener('tabcontentrendered',positionDecorate);
+positionDecorate();
 document.querySelectorAll<HTMLButtonElement>('nav.tabs button').forEach(button=>button.onclick=()=>{void attempt(async()=>{
   const token=++tabRevision;active=button.dataset.tab!;
   document.querySelectorAll<HTMLButtonElement>('nav.tabs button').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-current',b===button?'page':'false');});
   document.querySelectorAll<HTMLElement>('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===`tab-${active}`));
+  positionDecorate();
   journalDecorationContext(active==='journal');
   if(token===tabRevision)await renderActive();void attempt(flushAll);
 });});

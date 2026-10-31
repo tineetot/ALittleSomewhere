@@ -98,6 +98,21 @@
 
       <div class="mood-row" id="moodRow"></div>
 
+      <section class="prompt-pocket" aria-label="Optional Journal prompt">
+        <div class="prompt-pocket-heading">
+          <span class="prompt-pocket-title">Prompt Pocket</span>
+          <button type="button" class="prompt-pocket-toggle" id="promptPocketToggle" aria-expanded="false" aria-controls="promptPocketSlip">Find a little prompt</button>
+        </div>
+        <div class="prompt-pocket-slip" id="promptPocketSlip" hidden>
+          <p id="promptPocketText" aria-live="polite"></p>
+          <div class="prompt-pocket-actions">
+            <button type="button" class="ghost small" id="promptPocketAnother">Another prompt</button>
+            <button type="button" class="primary" id="promptPocketUse">Use prompt</button>
+          </div>
+        </div>
+        <p class="prompt-pocket-status" id="promptPocketStatus" role="status"></p>
+      </section>
+
       <div class="journal-toolbar">
         <button class="fmt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
         <button class="fmt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
@@ -142,8 +157,8 @@
           </div>
           <div class="memory-note-panel">
             <div class="memory-caption">
-              <label class="memory-sr-only" for="memoryNote">Photo caption</label>
-              <textarea id="memoryNote" placeholder="Caption…" rows="4" maxlength="500" aria-describedby="memoryNoteCount"></textarea>
+              <label class="memory-field-label" for="memoryNote">A note for this day</label>
+              <textarea id="memoryNote" placeholder="A little note about the day…" rows="4" maxlength="500" aria-describedby="memoryNoteCount"></textarea>
               <div id="memoryNoteCount" class="memory-note-count">0 / 500</div>
             </div>
             <div class="memory-upload-row">

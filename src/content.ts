@@ -1,3 +1,30 @@
+export const JOURNAL_PROMPTS = [
+  "What small detail from today do I want to remember?",
+  "What felt a little easier than I expected?",
+  "What is something I noticed on the way here?",
+  "What did I enjoy doing, even for a few minutes?",
+  "What is one thing I would like to make time for?",
+  "What made me smile today, however briefly?",
+  "What is taking up space in my mind right now?",
+  "What would make tomorrow feel gentler?",
+  "What is something I learned about myself lately?",
+  "Which ordinary moment felt quietly nice?",
+  "What did I do today that future me might appreciate?",
+  "What is one thing I can let be unfinished for now?",
+  "What sound, color, or smell stood out today?",
+  "What would I tell a friend who had my kind of day?",
+  "When did I feel most like myself recently?",
+  "What is something I am curious about at the moment?",
+  "What do I wish I had a little more time for?",
+  "What is one thing I handled in my own way?",
+  "What did I need today, and did I get any of it?",
+  "What is a place I would like to visit again?",
+  "What small comfort helped me feel more at ease?",
+  "What would I like to remember about this season of life?",
+  "What is something I can look forward to, big or small?",
+  "If today had a title, what would I call it?"
+];
+
 export const MAIN_ACTIVITIES = [
   {e:"☕",n:"Coffee shop I've never tried",b:"₱300–₱500"},
   {e:"🌅",n:"Sunset at MOA (with a snack or drink)",b:"₱100–₱300"},
@@ -130,4 +157,3 @@ export const PROMPTS = [
   "What's something you're curious about lately?",
   "What would 'rest' actually look like for you this week?"
 ];
-

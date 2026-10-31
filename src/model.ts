@@ -9,7 +9,7 @@ export interface Sticker { id:string; kind:StickerKind; x:number; y:number; size
 export interface Passport { id: string; date: string; main: Activity; side: Activity; notes: string; rating: number; images: string[]; photoFrames?:PhotoFrame[]; todos: {id:string;text:string;done:boolean}[] }
 export interface Flow { id: string; stage: 'main'|'mainResult'|'side'|'sideResult'|'confirm'; main?: Activity; side?: Activity; mainRespun: boolean; sideRespun: boolean }
 export interface PublicData { version: 2; tasks: Task[]; series: Series[]; gratitude: {id:string;date:string;text:string}[]; answers: Record<string,string>; passport: Passport[]; flow: Flow }
-export interface Day { html: string; font: string; mood: string; highlightNotes: Record<string,string>; images: string[]; note: string; stickers?:Sticker[]; photoFrames?:PhotoFrame[] }
+export interface Day { html: string; font: string; mood: string; highlightNotes: Record<string,string>; images: string[]; note: string; stickers?:Sticker[]; photoFrames?:PhotoFrame[]; photoCaptions?:string[] }
 export interface PrivateData { version: 2; days: Record<string,Day> }
 export const uid = () => crypto.randomUUID();
 export const emptyFlow = (): Flow => ({ id: uid(), stage:'main', mainRespun:false, sideRespun:false });
@@ -41,6 +41,7 @@ const str = (v: unknown): v is string => typeof v==='string';
 const identifier = (v: unknown) => str(v) && /^[a-zA-Z0-9:-]{1,100}$/.test(v);
 const num = (v: unknown): v is number => typeof v==='number' && Number.isFinite(v);
 const frames = (v:unknown) => v===undefined || (Array.isArray(v)&&v.every(f=>FRAME_STYLES.includes(f)));
+const captions = (v:unknown,max:number) => v===undefined || (Array.isArray(v)&&v.length<=max&&v.every(c=>str(c)&&c.length<=300));
 const between = (v:unknown,min:number,max:number) => num(v)&&v>=min&&v<=max;
 export const validStickers = (v:unknown):v is Sticker[] => Array.isArray(v)&&v.length<=40&&new Set(v.map(s=>s?.id)).size===v.length&&v.every(s=>obj(s)&&identifier(s.id)&&STICKER_KINDS.includes(s.kind as StickerKind)&&between(s.x,0,100)&&between(s.y,0,100)&&between(s.size,48,144)&&between(s.rotation,-180,180));
 const bool = (v: unknown): v is boolean => typeof v==='boolean';
@@ -60,5 +61,5 @@ export function validPublic(v: unknown): v is PublicData {
     (v.flow.stage==='main'||activity(v.flow.main))&&(v.flow.stage!=='confirm'&&v.flow.stage!=='sideResult'||activity(v.flow.side));
 }
 export function validPrivate(v: unknown): v is PrivateData {
-  return obj(v)&&v.version===2&&obj(v.days)&&Object.entries(v.days).every(([key,d])=>date(key)&&obj(d)&&str(d.html)&&str(d.font)&&str(d.mood)&&record(d.highlightNotes)&&Array.isArray(d.images)&&d.images.every(safeImage)&&str(d.note)&&(d.stickers===undefined||validStickers(d.stickers))&&frames(d.photoFrames));
+  return obj(v)&&v.version===2&&obj(v.days)&&Object.entries(v.days).every(([key,d])=>date(key)&&obj(d)&&str(d.html)&&str(d.font)&&str(d.mood)&&record(d.highlightNotes)&&Array.isArray(d.images)&&d.images.every(safeImage)&&str(d.note)&&(d.stickers===undefined||validStickers(d.stickers))&&frames(d.photoFrames)&&captions(d.photoCaptions,d.images.length));
 }

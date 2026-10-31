@@ -23,8 +23,55 @@ test('Reflect answers remain on their original dates through rapid navigation an
   await page.locator('#prevRDayBtn').click();await expect(page.locator('#promptAnswer')).toHaveValue('Original day answer');await expect(page.locator('#saveState')).toHaveText('Saved');await page.reload();await tab(page,'Reflect');await expect(page.locator('#promptAnswer')).toHaveValue('Original day answer');
 });
 test('Journal preserves writing through mood, font, date, locking and reload',async({page})=>{
-  await setupPrivate(page);await page.locator('#journalText').fill('A private little story');await page.getByRole('button',{name:'Mood happy',exact:true}).click();await page.locator('#fontPicker').selectOption("'Patrick Hand', cursive");await expect(page.locator('#journalText')).toHaveText('A private little story');await page.locator('#nextJDayBtn').click();await expect(page.locator('#journalText')).toBeEmpty();await page.locator('#prevJDayBtn').click();await expect(page.locator('#journalText')).toHaveText('A private little story');
+  await setupPrivate(page);await page.locator('#journalText').fill('A private little story');await expect(page.locator('#journalText')).toHaveCSS('outline-style','none');await page.getByRole('button',{name:'Mood happy',exact:true}).click();await page.locator('#fontPicker').selectOption("'Patrick Hand', cursive");await expect(page.locator('#journalText')).toHaveText('A private little story');await page.locator('#nextJDayBtn').click();await expect(page.locator('#journalText')).toBeEmpty();await page.locator('#prevJDayBtn').click();await expect(page.locator('#journalText')).toHaveText('A private little story');
   await page.screenshot({path:'test-results/journal-desktop.png',fullPage:true});await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalContent')).toBeHidden();await expect(page.locator('#journalText')).toBeEmpty();await page.reload();await tab(page,'Journal');await unlock(page);await expect(page.locator('#journalText')).toHaveText('A private little story');await expect(page.getByRole('button',{name:'Mood happy',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.locator('#fontPicker')).toHaveValue("'Patrick Hand', cursive");
+});
+test('Prompt Pocket is optional, inserts at the end of Journal writing, and saves privately',async({page})=>{
+  await setupPrivate(page);await page.locator('#journalText').fill('My original journal entry');
+  await expect(page.locator('#promptPocketToggle')).toHaveAttribute('aria-expanded','false');
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.locator('#promptPocketToggle').click();await expect(page.locator('#promptPocketSlip')).toBeVisible();
+  await expect(page.locator('#promptPocketSlip')).toHaveCSS('animation-name','prompt-unfold');
+  const firstPrompt=await page.locator('#promptPocketText').innerText();expect(firstPrompt.length).toBeGreaterThan(10);
+  await expect(page.locator('#promptPocketUse')).toHaveCSS('background-color','rgb(150, 59, 93)');
+  await page.locator('#promptPocketAnother').click();const prompt=await page.locator('#promptPocketText').innerText();expect(prompt).not.toBe(firstPrompt);
+  await page.locator('#promptPocketUse').click();await expect(page.locator('#journalText')).toContainText('My original journal entry');await expect(page.locator('#journalText')).toContainText(prompt);
+  await expect(page.locator('#journalText')).toHaveCSS('outline-style','none');
+  await expect(page.locator('#promptPocketStatus')).toContainText('Prompt added');await expect(page.locator('#promptPocketToggle')).toHaveAttribute('aria-expanded','false');
+  await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('#promptPocketSlip')).toHaveCSS('animation-duration','0s');
+  await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalContent')).toBeHidden();await tab(page,'Journal');await unlock(page);
+  await expect(page.locator('#journalText')).toContainText('My original journal entry');await expect(page.locator('#journalText')).toContainText(prompt);
+});
+test('Memories keep individual photo captions with their photos and frames',async({page})=>{
+  await setupPrivate(page);await page.locator('#memoryImageInput').setInputFiles([await photo(page),await photo(page,true)]);
+  await expect(page.locator('#memoryCounter')).toHaveText('1 / 2');await page.locator('#memoryPhotoCaption').fill('A bright little detail');
+  await page.locator('#memoryNextPhoto').click();await expect(page.locator('#memoryPhotoCaption')).toHaveValue('');
+  await page.locator('#memoryPhotoCaption').fill('The view on the way home');await page.locator('#memoryFrame').selectOption('tape');
+  await page.locator('#nextJDayBtn').click();await page.locator('#prevJDayBtn').click();
+  await expect(page.locator('#memoryPhotoCaption')).toHaveValue('A bright little detail');await page.locator('#memoryNextPhoto').click();
+  await expect(page.locator('#memoryPhotoCaption')).toHaveValue('The view on the way home');await expect(page.locator('.memory-photo')).toHaveClass(/frame-tape/);
+  await page.locator('#lockJournalBtn').click();await tab(page,'Journal');await unlock(page);
+  await expect(page.locator('#memoryPhotoCaption')).toHaveValue('A bright little detail');await page.locator('#memoryNextPhoto').click();
+  await expect(page.locator('#memoryPhotoCaption')).toHaveValue('The view on the way home');await expect(page.locator('.memory-photo')).toHaveClass(/frame-tape/);
+  await page.locator('#memoryPrevPhoto').click();page.once('dialog',dialog=>dialog.accept());await page.locator('#memoryRemovePhoto').click();
+  await expect(page.locator('#memoryCounter')).toHaveText('1 / 1');await expect(page.locator('#memoryPhotoCaption')).toHaveValue('The view on the way home');await expect(page.locator('.memory-photo')).toHaveClass(/frame-tape/);
+});
+test('Decorate stays beside the active section heading across tabs',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  const checkAligned=async(title:ReturnType<typeof page.locator>,toolbar:ReturnType<typeof page.locator>)=>{
+    await expect(toolbar).toHaveCount(1);const titleBox=await title.boundingBox(),toolbarBox=await toolbar.boundingBox();
+    expect(titleBox).not.toBeNull();expect(toolbarBox).not.toBeNull();expect(Math.abs((titleBox!.y+titleBox!.height/2)-(toolbarBox!.y+toolbarBox!.height/2))).toBeLessThan(24);
+  };
+  await checkAligned(page.locator('#tab-planner > .tab-heading-card h2'),page.locator('#tab-planner > .tab-heading-card .desk-toolbar'));
+  await tab(page,'Reflect');await checkAligned(page.locator('#tab-reflect > .tab-heading-card h2'),page.locator('#tab-reflect > .tab-heading-card .desk-toolbar'));
+  await tab(page,'Journal');await expect(page.locator('#journalLockScreen .locked-journal-heading .desk-toolbar')).toHaveCount(1);
+  await setupPrivate(page);await checkAligned(page.locator('#journalContent > .journal-unlocked-heading h2'),page.locator('#journalContent > .journal-unlocked-heading .desk-toolbar'));
+  await tab(page,'Spin');await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
+  await page.locator('#spinActivity').click();await expect(page.locator('#keepActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
+  await page.locator('#keepActivity').click();await expect(page.locator('#spinActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
+  await page.locator('#spinActivity').click();await expect(page.locator('#keepActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
+  await page.locator('#keepActivity').click();await expect(page.locator('#startDateBtn')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
+  await tab(page,'Passport');await checkAligned(page.locator('#tab-passport > .tab-heading-card h2'),page.locator('#tab-passport > .tab-heading-card .desk-toolbar'));
 });
 test('Failed private saves prevent locking and retain drafts until retry',async({page})=>{
   await setupPrivate(page);await writeFailure(page,true);await page.locator('#journalText').fill('Please keep this draft');await page.locator('#lockJournalBtn').click();await expect(page.locator('#appError')).toBeVisible();await expect(page.locator('#journalContent')).toBeVisible();await expect(page.locator('#journalText')).toHaveText('Please keep this draft');await writeFailure(page,false);await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalContent')).toBeHidden();await unlock(page);await expect(page.locator('#journalText')).toHaveText('Please keep this draft');

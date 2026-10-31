@@ -12,6 +12,9 @@ it('accepts existing pages and rejects damaged decoration records rather than dr
   const sticker={id:'s',kind:'bow',x:40,y:70,size:80,rotation:-8};
   expect(validPrivate({version:2,days:{'2026-10-29':emptyDay()}})).toBe(true);
   expect(validPrivate({version:2,days:{'2026-10-29':{...emptyDay(),stickers:[sticker],photoFrames:['tape','scallop']}}})).toBe(true);
+  expect(validPrivate({version:2,days:{'2026-10-29':{...emptyDay(),images:['data:image/jpeg;base64,QQ=='],photoCaptions:['A small detail']}}})).toBe(true);
+  expect(validPrivate({version:2,days:{'2026-10-29':{...emptyDay(),images:['data:image/jpeg;base64,QQ=='],photoCaptions:['one','extra']}}})).toBe(false);
+  expect(validPrivate({version:2,days:{'2026-10-29':{...emptyDay(),images:['data:image/jpeg;base64,QQ=='],photoCaptions:['x'.repeat(301)]}}})).toBe(false);
   expect(validStickers([{...sticker,x:Infinity}])).toBe(false);
   expect(validStickers([sticker,sticker])).toBe(false);
   expect(validPrivate({version:2,days:{'2026-10-29':{...emptyDay(),photoFrames:['unknown']}}})).toBe(false);
