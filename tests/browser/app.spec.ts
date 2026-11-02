@@ -62,16 +62,24 @@ test('Decorate stays beside the active section heading across tabs',async({page}
     await expect(toolbar).toHaveCount(1);const titleBox=await title.boundingBox(),toolbarBox=await toolbar.boundingBox();
     expect(titleBox).not.toBeNull();expect(toolbarBox).not.toBeNull();expect(Math.abs((titleBox!.y+titleBox!.height/2)-(toolbarBox!.y+toolbarBox!.height/2))).toBeLessThan(24);
   };
+  const checkJournalToolbarOutsideCard=async(card:ReturnType<typeof page.locator>)=>{
+    const toolbar=page.locator('#tab-journal>.desk-toolbar'),host=page.locator('#tab-journal');
+    await expect(toolbar).toHaveCount(1);const toolbarBox=await toolbar.boundingBox(),hostBox=await host.boundingBox(),cardBox=await card.boundingBox();
+    expect(toolbarBox).not.toBeNull();expect(hostBox).not.toBeNull();expect(cardBox).not.toBeNull();
+    expect(Math.abs((toolbarBox!.x+toolbarBox!.width)-(hostBox!.x+hostBox!.width))).toBeLessThan(1);expect(toolbarBox!.y+toolbarBox!.height).toBeLessThanOrEqual(cardBox!.y);
+  };
   await checkAligned(page.locator('#tab-planner > .tab-heading-card h2'),page.locator('#tab-planner > .tab-heading-card .desk-toolbar'));
   await tab(page,'Reflect');await checkAligned(page.locator('#tab-reflect > .tab-heading-card h2'),page.locator('#tab-reflect > .tab-heading-card .desk-toolbar'));
-  await tab(page,'Journal');await expect(page.locator('#journalLockScreen .locked-journal-heading .desk-toolbar')).toHaveCount(1);
-  await setupPrivate(page);await checkAligned(page.locator('#journalContent > .journal-unlocked-heading h2'),page.locator('#journalContent > .journal-unlocked-heading .desk-toolbar'));
+  await tab(page,'Journal');await checkJournalToolbarOutsideCard(page.locator('#journalLockScreen>.card'));
+  await setupPrivate(page);await checkJournalToolbarOutsideCard(page.locator('#journalContent>.card:first-child'));
   await tab(page,'Spin');await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await page.locator('#spinActivity').click();await expect(page.locator('#keepActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await page.locator('#keepActivity').click();await expect(page.locator('#spinActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await page.locator('#spinActivity').click();await expect(page.locator('#keepActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await page.locator('#keepActivity').click();await expect(page.locator('#startDateBtn')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await tab(page,'Passport');await checkAligned(page.locator('#tab-passport > .tab-heading-card h2'),page.locator('#tab-passport > .tab-heading-card .desk-toolbar'));
+  await page.setViewportSize({width:390,height:844});await tab(page,'Journal');await checkJournalToolbarOutsideCard(page.locator('#journalContent>.card:first-child'));
+  await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalLockScreen')).toBeVisible();await checkJournalToolbarOutsideCard(page.locator('#journalLockScreen>.card'));
 });
 test('Failed private saves prevent locking and retain drafts until retry',async({page})=>{
   await setupPrivate(page);await writeFailure(page,true);await page.locator('#journalText').fill('Please keep this draft');await page.locator('#lockJournalBtn').click();await expect(page.locator('#appError')).toBeVisible();await expect(page.locator('#journalContent')).toBeVisible();await expect(page.locator('#journalText')).toHaveText('Please keep this draft');await writeFailure(page,false);await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalContent')).toBeHidden();await unlock(page);await expect(page.locator('#journalText')).toHaveText('Please keep this draft');

@@ -1,65 +1,183 @@
-import { initLanding } from './landing';
-import './styles.css';
-import './stationery.css';
-import { initBackdrop } from './backdrop';
-import { $, on, attempt, initUI } from './ui';
-import { initJournal, openJournal, flushJournal, privatePending, journalDecorationContext } from './journal';
-import { initReflect, renderReflect, flushReflect, reflectPending } from './reflect';
-import { initPlanner, renderPlanner } from './planner';
-import { initPassport, renderPassport, flushPassport, passportPending } from './passport';
-import { renderSpin } from './spin';
-import { vault } from './services';
-let active='planner';
-let tabRevision=0;
-const decorateDrawer=$<HTMLDetailsElement>('decorateDrawer');
-const decorateToolbar=decorateDrawer.closest<HTMLElement>('.desk-toolbar')!;
-function positionDecorate():void{
-  const toolbar=decorateToolbar;
-  let heading:HTMLElement|null=null,lockedJournal=false;
-  if(active==='journal'){
-    const content=$('journalContent');
-    lockedJournal=content.style.display==='none';
-    heading=lockedJournal?$('journalLockScreen').querySelector<HTMLElement>('.card'):content.querySelector<HTMLElement>(':scope > .card');
-  }else if(active==='wheel')heading=document.querySelector<HTMLElement>('#wheelCard .wheel-heading-row');
-  else heading=document.querySelector<HTMLElement>(`#tab-${active} > .card:first-child`);
-  if(!heading)return;
-  document.querySelectorAll<HTMLElement>('.tab-heading-card,.wheel-heading-row,.locked-journal-heading,.journal-unlocked-heading').forEach(el=>el.classList.remove('tab-heading-card','wheel-heading-row','locked-journal-heading','journal-unlocked-heading'));
-  heading.classList.add(active==='wheel'?'wheel-heading-row':lockedJournal?'locked-journal-heading':'tab-heading-card');
-  if(active==='journal'&&!lockedJournal)heading.classList.add('journal-unlocked-heading');
-  if(toolbar.parentElement!==heading){decorateDrawer.open=false;heading.append(toolbar);}
+import { initLanding } from "./landing";
+import "./styles.css";
+import "./stationery.css";
+import { initBackdrop } from "./backdrop";
+import { $, on, attempt, initUI } from "./ui";
+import {
+  initJournal,
+  openJournal,
+  flushJournal,
+  privatePending,
+  journalDecorationContext,
+} from "./journal";
+import {
+  initReflect,
+  renderReflect,
+  flushReflect,
+  reflectPending,
+} from "./reflect";
+import { initPlanner, renderPlanner } from "./planner";
+import {
+  initPassport,
+  renderPassport,
+  flushPassport,
+  passportPending,
+} from "./passport";
+import { renderSpin } from "./spin";
+import { vault } from "./services";
+let active = "planner";
+let tabRevision = 0;
+const decorateDrawer = $<HTMLDetailsElement>("decorateDrawer");
+const decorateToolbar = decorateDrawer.closest<HTMLElement>(".desk-toolbar")!;
+function positionDecorate(): void {
+  const toolbar = decorateToolbar;
+  let heading: HTMLElement | null = null,
+    lockedJournal = false;
+  if (active === "journal") {
+    const content = $("journalContent");
+    lockedJournal = content.style.display === "none";
+    heading = $("tab-journal");
+  } else if (active === "wheel")
+    heading = document.querySelector<HTMLElement>(
+      "#wheelCard .wheel-heading-row",
+    );
+  else
+    heading = document.querySelector<HTMLElement>(
+      `#tab-${active} > .card:first-child`,
+    );
+  if (!heading) return;
+  document
+    .querySelectorAll<HTMLElement>(
+      ".tab-heading-card,.wheel-heading-row,.locked-journal-heading,.journal-unlocked-heading,.journal-decorate-host",
+    )
+    .forEach((el) =>
+      el.classList.remove(
+        "tab-heading-card",
+        "wheel-heading-row",
+        "locked-journal-heading",
+        "journal-unlocked-heading",
+      ),
+    );
+  if (active === "journal") {
+    heading.classList.add("journal-decorate-host");
+    if (!lockedJournal)
+      contentHeading().classList.add("tab-heading-card", "journal-unlocked-heading");
+  } else
+    heading.classList.add(
+      active === "wheel" ? "wheel-heading-row" : "tab-heading-card",
+    );
+  if (toolbar.parentElement !== heading) {
+    decorateDrawer.open = false;
+    heading.append(toolbar);
+  }
+
+  function contentHeading(): HTMLElement {
+    return $("journalContent").querySelector<HTMLElement>(":scope > .card")!;
+  }
 }
-async function renderActive():Promise<void>{
-  if(active==='journal')await openJournal();if(active==='reflect')await renderReflect();if(active==='planner')await renderPlanner();if(active==='passport')await renderPassport();if(active==='wheel')await renderSpin();positionDecorate();
-}
-export async function flushAll():Promise<void>{await Promise.all([vault.unlocked?flushJournal():Promise.resolve(),flushReflect(),flushPassport()]);}
-initUI();initJournal();initReflect();initPlanner();initPassport();void attempt(initBackdrop);
-window.addEventListener('journalviewchange',positionDecorate);window.addEventListener('tabcontentrendered',positionDecorate);
-positionDecorate();
-document.querySelectorAll<HTMLButtonElement>('nav.tabs button').forEach(button=>button.onclick=()=>{void attempt(async()=>{
-  const token=++tabRevision;active=button.dataset.tab!;
-  document.querySelectorAll<HTMLButtonElement>('nav.tabs button').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-current',b===button?'page':'false');});
-  document.querySelectorAll<HTMLElement>('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===`tab-${active}`));
+async function renderActive(): Promise<void> {
+  if (active === "journal") await openJournal();
+  if (active === "reflect") await renderReflect();
+  if (active === "planner") await renderPlanner();
+  if (active === "passport") await renderPassport();
+  if (active === "wheel") await renderSpin();
   positionDecorate();
-  journalDecorationContext(active==='journal');
-  if(token===tabRevision)await renderActive();void attempt(flushAll);
-});});
-on('refreshView','click',async()=>{await flushAll();await renderActive();});
-window.addEventListener('beforeunload',e=>{if(privatePending()||reflectPending()||passportPending()){e.preventDefault();e.returnValue='';}});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')void attempt(flushAll);});
+}
+export async function flushAll(): Promise<void> {
+  await Promise.all([
+    vault.unlocked ? flushJournal() : Promise.resolve(),
+    flushReflect(),
+    flushPassport(),
+  ]);
+}
+initUI();
+initJournal();
+initReflect();
+initPlanner();
+initPassport();
+void attempt(initBackdrop);
+window.addEventListener("journalviewchange", positionDecorate);
+window.addEventListener("tabcontentrendered", positionDecorate);
+positionDecorate();
+document.querySelectorAll<HTMLButtonElement>("nav.tabs button").forEach(
+  (button) =>
+    (button.onclick = () => {
+      void attempt(async () => {
+        const token = ++tabRevision;
+        active = button.dataset.tab!;
+        document
+          .querySelectorAll<HTMLButtonElement>("nav.tabs button")
+          .forEach((b) => {
+            b.classList.toggle("active", b === button);
+            b.setAttribute("aria-current", b === button ? "page" : "false");
+          });
+        document
+          .querySelectorAll<HTMLElement>(".tab-panel")
+          .forEach((p) =>
+            p.classList.toggle("active", p.id === `tab-${active}`),
+          );
+        positionDecorate();
+        journalDecorationContext(active === "journal");
+        if (token === tabRevision) await renderActive();
+        void attempt(flushAll);
+      });
+    }),
+);
+on("refreshView", "click", async () => {
+  await flushAll();
+  await renderActive();
+});
+window.addEventListener("beforeunload", (e) => {
+  if (privatePending() || reflectPending() || passportPending()) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") void attempt(flushAll);
+});
 initLanding(flushAll);
 void attempt(renderActive);
-if(import.meta.env.PROD&&'serviceWorker' in navigator){
-  let registration:ServiceWorkerRegistration|undefined;
-  let refreshing=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(refreshing)location.reload();});
-  void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).then(r=>{
-    registration=r;
-    if(r.waiting)$('updateNotice').hidden=false;
-    r.addEventListener('updatefound',()=>{const worker=r.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)$('updateNotice').hidden=false;});});
-  }).catch(()=>{$('offlineState').hidden=false;$('offlineState').textContent='Offline setup failed. Retry online.';});
-  on('updateApp','click',async()=>{
-    if(privatePending()||passportPending())throw new Error('Finish saving photos and private changes before updating.');
-    await flushAll();refreshing=true;registration?.waiting?.postMessage({type:'ACTIVATE_UPDATE'});
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  let registration: ServiceWorkerRegistration | undefined;
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) location.reload();
   });
-  on('checkUpdates','click',async()=>{await registration?.update();$('offlineState').hidden=false;$('offlineState').textContent=registration?.waiting?'Update available.':'Up to date.';});
-}else $('checkUpdates').hidden=true;
+  void navigator.serviceWorker
+    .register(`${import.meta.env.BASE_URL}sw.js`)
+    .then((r) => {
+      registration = r;
+      if (r.waiting) $("updateNotice").hidden = false;
+      r.addEventListener("updatefound", () => {
+        const worker = r.installing;
+        worker?.addEventListener("statechange", () => {
+          if (
+            worker.state === "installed" &&
+            navigator.serviceWorker.controller
+          )
+            $("updateNotice").hidden = false;
+        });
+      });
+    })
+    .catch(() => {
+      $("offlineState").hidden = false;
+      $("offlineState").textContent = "Offline setup failed. Retry online.";
+    });
+  on("updateApp", "click", async () => {
+    if (privatePending() || passportPending())
+      throw new Error(
+        "Finish saving photos and private changes before updating.",
+      );
+    await flushAll();
+    refreshing = true;
+    registration?.waiting?.postMessage({ type: "ACTIVATE_UPDATE" });
+  });
+  on("checkUpdates", "click", async () => {
+    await registration?.update();
+    $("offlineState").hidden = false;
+    $("offlineState").textContent = registration?.waiting
+      ? "Update available."
+      : "Up to date.";
+  });
+} else $("checkUpdates").hidden = true;
