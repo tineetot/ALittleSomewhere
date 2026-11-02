@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+test('Landing does not render the left floral stationery illustration',async({page})=>{
+await page.goto('/');
+await expect(page.locator('.scene-left-stationery')).toHaveCount(0);
+});
 test('Desktop diary button fits in a short default-zoom viewport',async({page})=>{
 await page.setViewportSize({width:1440,height:650});await page.goto('/');
 const button=page.locator('#openDiary'),bounds=await button.boundingBox(),heading=await page.locator('.welcome-intro h1').boundingBox();
@@ -18,6 +22,7 @@ await page.setViewportSize({width,height:900});await page.goto('/');
 await expect(page.locator('#landing')).toBeVisible();await expect(page.locator('#appShell')).toBeHidden();
 await expect(page.locator('.diary-inside')).toHaveAttribute('inert','');
 await expect(page.getByText('Skip to my space',{exact:true})).toHaveCount(0);
+await expect(page.locator('.scene-left-stationery')).toHaveCount(0);
 await page.getByRole('button',{name:'Flutter the paper butterfly'}).click();await expect(page.locator('.scene-butterfly')).toHaveAttribute('aria-pressed','true');
 await page.getByRole('button',{name:'Tug the ribbon'}).click();await expect(page.locator('.scene-ribbon')).toHaveAttribute('aria-pressed','true');
 await page.mouse.move(200,250);

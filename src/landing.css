@@ -41,7 +41,6 @@ body.on-cover{background:var(--blush)}body.on-cover #scrapbookBackdrop{display:n
 #landing::before{display:none}
 .landing-scene{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;--scene-x:0px;--scene-y:0px}
 .scene-wash{position:absolute;inset:0;background:radial-gradient(ellipse at 0 80%,#f2aac355,transparent 45%),radial-gradient(ellipse at 100% 10%,#f9cddd99,transparent 45%)}
-.scene-left-stationery{position:absolute;left:-100px;top:17%;width:min(52%,680px);height:83%;background:url("./assets/landing-left-stationery.svg?no-inline") left bottom/contain no-repeat;opacity:.76;transform:translate(var(--scene-x),var(--scene-y))}
 .scene-gingham{position:absolute;width:280px;height:115%;top:-40px;left:-205px;transform:rotate(-9deg) translate(var(--scene-x),var(--scene-y));background:repeating-linear-gradient(90deg,#c85c8219 0 15px,transparent 15px 30px),repeating-linear-gradient(0deg,#c85c8219 0 15px,#fffaf4 15px 30px);border-right:7px solid #fffaf4;box-shadow:5px 2px 18px #c85c8210}
 .scene-paper{position:absolute;width:300px;height:430px;right:-195px;top:2%;background:repeating-linear-gradient(0deg,transparent 0 25px,#e2789b29 25px 26px),#fffaf4;transform:rotate(14deg) translate(var(--scene-x),var(--scene-y));box-shadow:-4px 8px 16px #c85c8212;border:1px solid #f0bfd2}
 .scene-doily{position:absolute;width:360px;height:360px;bottom:-210px;right:-70px;border:16px dotted #fffaf4;border-radius:50%;background:repeating-conic-gradient(#fffaf4 0 2deg,transparent 2deg 8deg);box-shadow:0 0 0 3px #fffaf4,inset 0 0 0 30px #fffaf488;transform:translate(var(--scene-x),var(--scene-y))}
@@ -62,7 +61,7 @@ body.on-cover{background:var(--blush)}body.on-cover #scrapbookBackdrop{display:n
 @keyframes welcome-link-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 .cover-border .cover-flower{width:78px;height:84px;stroke-linecap:round;stroke-linejoin:round}
 @media(min-width:1100px){.scene-butterfly{left:24%;bottom:70px}.scene-gingham{left:-180px}.scene-doily{width:450px;height:450px;bottom:-230px}}
-@media(max-width:600px){.scene-gingham{left:-247px;opacity:.65}.scene-paper{right:-267px}.scene-left-stationery{left:-90px;top:24%;width:100%;height:68%;opacity:.43}.scene-botanical{width:115px;height:230px;opacity:.5}.botanical-left{left:-50px;bottom:-40px}.botanical-right{right:-65px;top:90px}.scene-ribbon{right:5px;width:55px;scale:.65;transform-origin:top right}.welcome-mast{padding-right:24px}.scene-butterfly{width:62px;height:60px;left:20%;bottom:28px}.scene-doily{right:-135px;bottom:-240px}.welcome-actions{min-height:120px}.scene-thread{height:125px}}
+@media(max-width:600px){.scene-gingham{left:-247px;opacity:.65}.scene-paper{right:-267px}.scene-botanical{width:115px;height:230px;opacity:.5}.botanical-left{left:-50px;bottom:-40px}.botanical-right{right:-65px;top:90px}.scene-ribbon{right:5px;width:55px;scale:.65;transform-origin:top right}.welcome-mast{padding-right:24px}.scene-butterfly{width:62px;height:60px;left:20%;bottom:28px}.scene-doily{right:-135px;bottom:-240px}.welcome-actions{min-height:120px}.scene-thread{height:125px}}
 @media(prefers-reduced-motion:reduce){.scene-butterfly[aria-pressed=true] svg{animation:none}.landing-scene{--scene-x:0px!important;--scene-y:0px!important}}
 
 .welcome-stage{position:relative;max-width:1180px;margin:12px auto 0}
@@ -81,7 +80,6 @@ body.on-cover{background:var(--blush)}body.on-cover #scrapbookBackdrop{display:n
   .desk-note{top:42px}
   .desk-flower{top:145px}
   .desk-pencil{top:330px}
-  .scene-left-stationery{left:calc(50% - 680px);top:20%;width:min(50%,650px);height:80%;opacity:.88}
 }
 @media(max-width:1099px){
   .welcome-stage{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -97,10 +95,8 @@ body.on-cover{background:var(--blush)}body.on-cover #scrapbookBackdrop{display:n
   .welcome-actions{margin-top:12px}
   .diary-desk{margin-top:0}
   .desk-flower{right:-8px;width:48px;transform:rotate(10deg);z-index:3}
-  .scene-left-stationery{left:-36px;top:25%;width:108%;height:65%;opacity:.57}
 }
 @media(min-width:1300px){
   .welcome-copy{transform:translateX(148px)}
   .diary-desk{transform:translateX(-31px)}
-  .scene-left-stationery{left:calc(50% - 640px)}
 }
