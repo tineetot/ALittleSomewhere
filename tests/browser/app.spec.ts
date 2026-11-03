@@ -78,7 +78,7 @@ test('Decorate stays beside the active section heading across tabs',async({page}
   await page.locator('#spinActivity').click();await expect(page.locator('#keepActivity')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await page.locator('#keepActivity').click();await expect(page.locator('#startDateBtn')).toBeVisible();await checkAligned(page.locator('#wheelCard .wheel-heading-copy h2'),page.locator('#wheelCard .wheel-heading-row .desk-toolbar'));
   await tab(page,'Passport');await checkAligned(page.locator('#tab-passport > .tab-heading-card h2'),page.locator('#tab-passport > .tab-heading-card .desk-toolbar'));
-  await page.setViewportSize({width:390,height:844});await tab(page,'Journal');await checkJournalToolbarOutsideCard(page.locator('#journalContent>.card:first-child'));
+  await page.setViewportSize({width:390,height:844});await tab(page,'Spin');await page.locator('#startOverBtn').click();await expect(page.locator('.hub svg')).toBeVisible();await expect(page.locator('.hub svg')).toHaveAttribute('viewBox','0 0 24 24');await tab(page,'Journal');await checkJournalToolbarOutsideCard(page.locator('#journalContent>.card:first-child'));
   await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalLockScreen')).toBeVisible();await checkJournalToolbarOutsideCard(page.locator('#journalLockScreen>.card'));
 });
 test('Failed private saves prevent locking and retain drafts until retry',async({page})=>{
