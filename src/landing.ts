@@ -3,6 +3,21 @@ import './landing.css';
 import { attempt } from './ui';
 export function initLanding(flush:()=>Promise<void>):void{
 const landing=document.getElementById('landing')!,shell=document.getElementById('appShell')!;
+const welcomeKey='a-little-somewhere.welcome.v1';
+const welcome=document.createElement('dialog');
+welcome.className='onboarding-dialog';
+welcome.setAttribute('aria-labelledby','onboardingTitle');
+welcome.setAttribute('aria-describedby','onboardingDescription');
+welcome.innerHTML='<div class="onboarding-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3v8M16 21v8M3 16h8M21 16h8M6.8 6.8l5.7 5.7M19.5 19.5l5.7 5.7M25.2 6.8l-5.7 5.7M12.5 19.5l-5.7 5.7" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/><circle cx="16" cy="16" r="2" fill="currentColor"/></svg></div><h2 id="onboardingTitle">Welcome to your little space</h2><p id="onboardingDescription">A cozy place to write, reflect, plan, and save small memories. Start anywhere, at your own pace.</p><button id="exploreOnMyOwn" class="primary" type="button" autofocus>Explore on my own</button>';
+document.body.append(welcome);
+const dismissWelcome=()=>{
+  if(!welcome.open)return;
+  try{localStorage.setItem(welcomeKey,'done');}
+  catch(error){welcome.close();void attempt(async()=>{throw error;});return;}
+  welcome.close();
+};
+welcome.querySelector<HTMLButtonElement>('#exploreOnMyOwn')!.addEventListener('click',dismissWelcome);
+welcome.addEventListener('cancel',event=>{event.preventDefault();dismissWelcome();});
 landing.innerHTML=`
 <div class="welcome-mast"><div class="brand"><span class="seal"><img src="/icon-192.png" alt=""></span><span class="display italic">A Little Somewhere</span></div></div>
 <div class="welcome-stage">
@@ -23,8 +38,15 @@ const open=document.getElementById('openDiary') as HTMLButtonElement,enter=docum
 open.onclick=async()=>{if(opening||opened)return;opening=true;open.disabled=true;open.setAttribute('aria-expanded','true');landing.classList.add('diary-open');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)await new Promise(r=>setTimeout(r,1250));opened=true;opening=false;inside.inert=false;enter.hidden=false;enter.inert=false;document.getElementById('diaryCover')!.setAttribute('aria-hidden','true');open.hidden=true;document.getElementById('diaryStatus')!.textContent='Diary opened.';if(!landing.hidden)enter.focus({preventScroll:true});};
 for(const id of ['paperNote','pressedFlower']){const button=document.getElementById(id)!;button.onclick=()=>{const pressed=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(pressed));};}
 const show=(space:boolean,focus:boolean)=>{shell.hidden=!space;shell.inert=!space;landing.hidden=space;landing.inert=space;document.body.classList.toggle('on-cover',!space);document.querySelector<HTMLAnchorElement>('.skip-link')!.href=space?'#mainContent':'#openDiary';if(focus){window.scrollTo(0,0);if(space){const main=document.getElementById('mainContent')!;main.tabIndex=-1;main.focus({preventScroll:true});}else(opened?enter:open).focus({preventScroll:true});}};
+const showWelcome=()=>{
+  if(welcome.open)return;
+  try{if(localStorage.getItem(welcomeKey)!=='done')welcome.showModal();}
+  catch(error){void attempt(async()=>{throw error;});}
+};
 let revision=0;
-window.addEventListener('hashchange',()=>{const token=++revision;void attempt(async()=>{const space=location.hash==='#space';if(!space){try{await flush();}catch(error){history.replaceState(null,'','#space');throw error;}}if(token===revision)show(space,true);});});
+window.addEventListener('hashchange',()=>{const token=++revision;void attempt(async()=>{const space=location.hash==='#space';if(!space){try{await flush();}catch(error){history.replaceState(null,'','#space');throw error;}}if(token===revision){show(space,true);if(space)showWelcome();}});});
 document.getElementById('returnCover')!.onclick=()=>{void attempt(async()=>{await flush();location.hash='cover';});};
-show(location.hash==='#space',false);
+const initialSpace=location.hash==='#space';
+show(initialSpace,false);
+if(initialSpace)showWelcome();
 }

@@ -123,6 +123,10 @@ Added an original locally bundled floral stationery illustration to fill the lan
 
 Reworked the desktop entrance into one centered two-column composition, drawing the headline/action toward the diary and reducing their visual gap. Strengthened the local floral-paper illustration and attached blossoms to the ends of its stems; the decorative botanical sprigs now also have petals at every branch tip. Kept a comfortable stacked layout on smaller screens and adjusted the mobile pressed flower so it no longer competes with the diary for clicks. Added layout checks for 1440×650, 1440px and the user's 1680px screenshot width, plus 390px/768px responsive navigation and reduced-motion/offline coverage. Verification complete: strict TypeScript, 11 logic tests, production build/release checks and all 36 real Microsoft Edge browser tests pass. Reviewed desktop open/closed and mobile layouts. No commit, push or deployment.
 
+## First-visit welcome — 4 November 2026
+
+Added a brief welcome dialog shown the first time someone enters their space, with a clear “Explore on my own” action and Escape-to-dismiss. The choice is stored as a non-sensitive local preference; no personal details are requested. Added browser checks for first visits, direct links, keyboard dismissal and persistence. Verified with strict TypeScript, 11 logic tests, production build/release checks and all 39 real Microsoft Edge browser tests. No commit, push or deployment.
+
 ## Spin wheel hub mark — 3 November 2026
 
 Replaced the wheel's Unicode center glyph with an inline, CSS-colored SVG sparkle to avoid platform-specific emoji rendering on mobile. Added a mobile browser assertion for the SVG hub mark. Verified with strict TypeScript, 11 logic tests, production build/release checks and all 37 real Microsoft Edge browser tests. No commit, push or deployment.

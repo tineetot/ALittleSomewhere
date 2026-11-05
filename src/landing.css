@@ -36,6 +36,16 @@ body.on-cover{background:var(--blush)}body.on-cover #scrapbookBackdrop{display:n
 @media(max-width:600px){.welcome-mast .brand{font-size:21px;gap:9px}.welcome-mast .brand .seal{width:34px;height:34px}.desk-note svg{height:55px}.cover-border{gap:20px}.diary-inside{gap:32px}}
 .cover-border>.display{color:inherit}
 
+.onboarding-dialog{width:min(440px,calc(100vw - 36px));padding:30px 28px 26px;border:1px solid var(--lace);border-radius:14px;background:var(--cream);color:var(--plum);text-align:center;box-shadow:0 18px 60px #5c43532e}
+.onboarding-dialog::backdrop{background:#5c435355;backdrop-filter:blur(2px)}
+.onboarding-mark{width:42px;height:42px;margin:0 auto 12px;border:1px solid var(--lace);border-radius:50%;display:grid;place-items:center;color:var(--rose-deep);background:var(--blush)}
+.onboarding-mark svg{width:23px;height:23px}
+.onboarding-dialog h2{margin:0 0 10px;color:var(--rose-deep);font-family:Fraunces,serif;font-size:clamp(23px,5vw,29px);font-weight:500;line-height:1.2}
+.onboarding-dialog p{max-width:34ch;margin:0 auto 22px;color:var(--plum-soft);font-size:15px;line-height:1.6}
+.onboarding-dialog button{min-height:44px}
+.onboarding-dialog :focus-visible{outline:2px solid var(--rose-deep);outline-offset:4px}
+@media(max-width:600px){.onboarding-dialog{padding:26px 20px 22px}}
+
 /* Layered desk edges leave a quiet, readable centre. */
 #landing{isolation:isolate;background:radial-gradient(ellipse at 45% 40%,var(--cream),var(--blush) 65%,#f9cddd88)}
 #landing::before{display:none}

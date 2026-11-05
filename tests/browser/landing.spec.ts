@@ -1,4 +1,23 @@
 import { test, expect } from '@playwright/test';
+test('First visit welcomes visitors and offers a clear way to explore independently',async({page})=>{
+await page.goto('/');
+const dialog=page.locator('.onboarding-dialog');
+await expect(dialog).toBeHidden();
+await page.locator('#openDiary').click();await page.locator('#enterSpace').click();
+await expect(dialog).toBeVisible();await expect(page.locator('#onboardingTitle')).toHaveText('Welcome to your little space');
+await expect(page.locator('#onboardingDescription')).toContainText('Start anywhere, at your own pace.');
+await expect(page.locator('#exploreOnMyOwn')).toBeFocused();
+await page.locator('#exploreOnMyOwn').click();await expect(dialog).toBeHidden();await expect(page.locator('#appShell')).toBeVisible();
+expect(await page.evaluate(()=>localStorage.getItem('a-little-somewhere.welcome.v1'))).toBe('done');
+await page.reload();await expect(page.locator('#appShell')).toBeVisible();await expect(dialog).toBeHidden();
+});
+test('Direct first visit can dismiss onboarding with Escape and remembers the choice',async({page})=>{
+await page.goto('/#space');
+const dialog=page.locator('.onboarding-dialog');
+await expect(dialog).toBeVisible();await page.keyboard.press('Escape');await expect(dialog).toBeHidden();
+expect(await page.evaluate(()=>localStorage.getItem('a-little-somewhere.welcome.v1'))).toBe('done');
+await page.reload();await expect(page.locator('#appShell')).toBeVisible();await expect(dialog).toBeHidden();
+});
 test('Landing does not render the left floral stationery illustration',async({page})=>{
 await page.goto('/');
 await expect(page.locator('.scene-left-stationery')).toHaveCount(0);
@@ -36,7 +55,7 @@ const centres=await page.evaluate(()=>{const book=document.getElementById('diary
 expect(Math.abs(centres.book-centres.desk)).toBeLessThan(1);
 if(width>=1300){const composition=await page.evaluate(()=>{const stage=document.querySelector('.welcome-stage')!.getBoundingClientRect(),title=document.querySelector('.welcome-intro h1')!,range=document.createRange();range.selectNodeContents(title);const titleRight=Math.max(...[...range.getClientRects()].map(rect=>rect.right)),action=document.querySelector('#openDiary')!.getBoundingClientRect(),book=document.querySelector('#diaryBook')!.getBoundingClientRect();return {center:stage.left+stage.width/2,gap:book.left-Math.max(titleRight,action.right)};});expect(Math.abs(composition.center-width/2)).toBeLessThan(1);expect(composition.gap).toBeGreaterThanOrEqual(0);expect(composition.gap).toBeLessThanOrEqual(140);}
 await page.screenshot({path:`test-results/diary-open-${width}.png`});
-await page.locator('#enterSpace').click();await expect(page.locator('#appShell')).toBeVisible();await expect(page.locator('#landing')).toBeHidden();
+await page.locator('#enterSpace').click();await expect(page.locator('#appShell')).toBeVisible();await expect(page.locator('#landing')).toBeHidden();await page.locator('#exploreOnMyOwn').click();
 await page.locator('#newTaskText').fill('From my diary');await page.locator('#addTaskBtn').click();await expect(page.locator('.task-text')).toHaveText('From my diary');
 await page.locator('#returnCover').click();await expect(page.locator('#landing')).toBeVisible();await page.goBack();await expect(page.locator('#appShell')).toBeVisible();await page.reload();await expect(page.locator('.task-text')).toHaveText('From my diary');
 });
@@ -44,7 +63,7 @@ test('Reduced motion, keyboard entry, and offline cover entrance',async({page,co
 await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
 await page.locator('#openDiary').focus();await page.keyboard.press('Enter');await expect(page.locator('#enterSpace')).toBeFocused();
 expect(await page.locator('#diaryCover').evaluate(el=>getComputedStyle(el).transitionDuration)).toBe('0s');
-await page.locator('#enterSpace').focus();await page.keyboard.press('Enter');await expect(page.locator('#appShell')).toBeVisible();
+await page.locator('#enterSpace').focus();await page.keyboard.press('Enter');await expect(page.locator('#appShell')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('.onboarding-dialog')).toBeHidden();
 await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();
 await context.setOffline(true);await page.goto('/');await expect(page.locator('#landing')).toBeVisible();await page.locator('#openDiary').click();await page.locator('#enterSpace').click();await expect(page.locator('#newTaskText')).toBeVisible();await context.setOffline(false);
 });
