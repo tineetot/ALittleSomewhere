@@ -63,8 +63,26 @@
       <div class="card">
         <div class="eyebrow">Notebook / 01</div>
         <h2 style="margin:4px 0 2px;">Journal</h2>
+        <div class="journal-heading-actions"><button class="ghost small" id="journalSearchToggle" type="button" aria-expanded="false" aria-controls="journalSearch">Find an entry</button>
         <button class="ghost" id="lockJournalBtn" style="margin-top:10px;">Lock journal</button>
+        </div>
       </div>
+
+      <section class="card journal-search" id="journalSearch" aria-labelledby="journalSearchHeading" hidden>
+        <h3 id="journalSearchHeading">Find an entry</h3>
+        <form id="journalSearchForm">
+          <label for="journalSearchText">Words or date (YYYY-MM-DD)</label>
+          <input id="journalSearchText" type="search" maxlength="100" placeholder="Search your pages…" autocomplete="off">
+          <label for="journalSearchDate">Filter to a day (optional)</label>
+          <input id="journalSearchDate" type="date">
+          <div class="journal-search-actions">
+            <button class="primary" type="submit">Search</button>
+            <button class="ghost small" id="journalSearchClose" type="button">Close search</button>
+          </div>
+        </form>
+        <p id="journalSearchStatus" class="journal-search-status" role="status" aria-live="polite"></p>
+        <ul id="journalSearchResults" class="journal-search-results" aria-label="Matching Journal entries"></ul>
+      </section>
 
       <div class="card" style="padding:18px;">
         <div class="planner-nav">

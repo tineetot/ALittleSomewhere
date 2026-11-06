@@ -18,6 +18,22 @@ body[data-paper="floral"] #scrapbookBackdrop::before,.swatch-floral{background-i
 .journal-decorate-host>.desk-toolbar{position:absolute;top:0;right:0;}
 #tab-journal.journal-decorate-host #journalLockScreen>.card{margin-top:0!important;}
 .wheel-heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:760px;margin:0 auto 12px;text-align:left;}
+.journal-heading-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;}
+.journal-heading-actions #lockJournalBtn{margin-top:0!important;}
+.journal-search{max-width:760px;margin:0 auto 16px;text-align:left;}
+.journal-search h3{margin:0 0 12px;color:var(--rose-deep);font-family:Fraunces,serif;font-size:21px;}
+.journal-search form{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:end;}
+.journal-search form label{font-size:12px;font-weight:600;color:var(--plum);}
+.journal-search form input{width:100%;min-width:0;min-height:44px;padding:9px 11px;border:1px solid var(--lace);border-radius:8px;background:var(--cream);color:var(--plum);}
+.journal-search-actions{grid-column:1/-1;display:flex;gap:8px;align-items:center;}
+.journal-search-status{min-height:1.5em;margin:10px 0 0;color:var(--plum-soft);font-size:12px;}
+.journal-search-results{display:grid;gap:6px;list-style:none;padding:0;margin:0;}
+.journal-search-results:empty{display:none;}
+.journal-search-result{display:flex;width:100%;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 11px;border:1px solid #f2aac366;border-radius:8px;background:#fffaf4;color:var(--plum);text-align:left;overflow-wrap:anywhere;}
+.journal-search-result strong{color:var(--rose-deep);font-size:12px;}
+.journal-search-result span{font-size:13px;line-height:1.5;}
+.journal-search-result:hover{background:#fde6ee;}
+@media(max-width:600px){.journal-search form{grid-template-columns:1fr;}.journal-search-actions{grid-column:1;}}
 .wheel-heading-copy .eyebrow{margin-bottom:2px;}
 .wheel-heading-copy h2{margin:0!important;}
 .decorate-drawer{font-size:12px;}

@@ -127,6 +127,10 @@ Reworked the desktop entrance into one centered two-column composition, drawing 
 
 Added a brief welcome dialog shown the first time someone enters their space, with a clear “Explore on my own” action and Escape-to-dismiss. The choice is stored as a non-sensitive local preference; no personal details are requested. Added browser checks for first visits, direct links, keyboard dismissal and persistence. Verified with strict TypeScript, 11 logic tests, production build/release checks and all 39 real Microsoft Edge browser tests. No commit, push or deployment.
 
+## Journal entry search — 6 November 2026
+
+Added unlocked-Journal search across sanitized entry text, day notes and photo captions, with an optional exact-date filter, dated previews and direct navigation to a result. Search reads the existing encrypted vault and in-memory drafts; it creates no separate index and clears its query/results when closed or when locking starts. Browser coverage checks keyword matches, date-only and combined date/text filtering, result navigation and clearing on lock. Verification: strict TypeScript, 11 logic tests and production build/release checks pass; 39 of 40 Edge browser tests pass. The existing “A sticker can be dragged directly from the tray and removed with the keyboard” browser test fails during drag/drop and is not part of the Journal search flow; follow-up remains. No commit, push or deployment.
+
 ## Spin wheel hub mark — 3 November 2026
 
 Replaced the wheel's Unicode center glyph with an inline, CSS-colored SVG sparkle to avoid platform-specific emoji rendering on mobile. Added a mobile browser assertion for the SVG hub mark. Verified with strict TypeScript, 11 logic tests, production build/release checks and all 37 real Microsoft Edge browser tests. No commit, push or deployment.

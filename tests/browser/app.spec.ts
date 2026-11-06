@@ -26,6 +26,29 @@ test('Journal preserves writing through mood, font, date, locking and reload',as
   await setupPrivate(page);await page.locator('#journalText').fill('A private little story');await expect(page.locator('#journalText')).toHaveCSS('outline-style','none');await page.getByRole('button',{name:'Mood happy',exact:true}).click();await page.locator('#fontPicker').selectOption("'Patrick Hand', cursive");await expect(page.locator('#journalText')).toHaveText('A private little story');await page.locator('#nextJDayBtn').click();await expect(page.locator('#journalText')).toBeEmpty();await page.locator('#prevJDayBtn').click();await expect(page.locator('#journalText')).toHaveText('A private little story');
   await page.screenshot({path:'test-results/journal-desktop.png',fullPage:true});await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalContent')).toBeHidden();await expect(page.locator('#journalText')).toBeEmpty();await page.reload();await tab(page,'Journal');await unlock(page);await expect(page.locator('#journalText')).toHaveText('A private little story');await expect(page.getByRole('button',{name:'Mood happy',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.locator('#fontPicker')).toHaveValue("'Patrick Hand', cursive");
 });
+test('Journal search matches private entry text, filters by date, opens a result and clears on lock',async({page})=>{
+  await setupPrivate(page);
+  const firstKey=await page.evaluate(()=>{const d=new Date(document.querySelector('#jDayNumBig')!.textContent!);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;});
+  const secondKey=await page.evaluate(key=>{const d=new Date(`${key}T12:00:00`);d.setDate(d.getDate()+1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;},firstKey);
+  await page.locator('#journalText').fill('I saw a tiny moonflower beside the quiet path.');
+  await page.locator('#nextJDayBtn').click();await expect(page.locator('#journalText')).toHaveAttribute('contenteditable','true');await page.locator('#journalText').fill('We shared warm tea after the rain.');
+  await page.locator('#journalSearchToggle').click();
+  await page.locator('#journalSearchText').fill('moonflower');await page.locator('#journalSearchForm button[type="submit"]').click();
+  await expect(page.locator('#journalSearchResults .journal-search-result')).toHaveCount(1);
+  await expect(page.locator('#journalSearchResults .journal-search-result')).toContainText('moonflower');
+  await expect(page.locator('#journalSearchStatus')).toContainText('Found 1 entry');
+  await page.locator('#journalSearchText').fill('tea');await page.locator('#journalSearchDate').fill(firstKey);
+  await page.locator('#journalSearchForm button[type="submit"]').click();await expect(page.locator('#journalSearchResults .journal-search-result')).toHaveCount(0);await expect(page.locator('#journalSearchStatus')).toHaveText('No matching entries.');
+  await page.locator('#journalSearchDate').fill(secondKey);
+  await page.locator('#journalSearchForm button[type="submit"]').click();await expect(page.locator('#journalSearchResults .journal-search-result')).toHaveCount(1);
+  await page.locator('#journalSearchText').fill('');await page.locator('#journalSearchForm button[type="submit"]').click();await expect(page.locator('#journalSearchResults .journal-search-result')).toHaveCount(1);
+  await page.locator('#journalSearchResults .journal-search-result').click();await expect(page.locator('#journalText')).toHaveText('We shared warm tea after the rain.');
+  await expect(page.locator('#journalSearch')).toBeHidden();
+  await page.locator('#journalSearchToggle').click();await page.locator('#journalSearchText').fill('tea');await page.locator('#journalSearchForm button[type="submit"]').click();
+  await expect(page.locator('#journalSearchResults .journal-search-result')).toHaveCount(1);
+  await page.locator('#lockJournalBtn').click();await expect(page.locator('#journalSearch')).toBeHidden();
+  await expect(page.locator('#journalSearchResults')).toBeEmpty();await expect(page.locator('#journalSearchText')).toHaveValue('');await expect(page.locator('#journalSearchDate')).toHaveValue('');
+});
 test('Prompt Pocket is optional, inserts at the end of Journal writing, and saves privately',async({page})=>{
   await setupPrivate(page);await page.locator('#journalText').fill('My original journal entry');
   await expect(page.locator('#promptPocketToggle')).toHaveAttribute('aria-expanded','false');

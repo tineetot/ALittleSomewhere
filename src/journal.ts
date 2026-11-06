@@ -19,9 +19,65 @@ let noteTarget:{date:string;id:string}|undefined;
 let ready=false;
 let promptText='';
 let desk:StickerDesk;
+let searchRevision=0;
 export function journalDecorationContext(active:boolean):void {desk?.refresh(active&&ready&&vault.unlocked&&!locking);}
 const editor=()=>$('journalText');
 export const privatePending=()=>drafts.size>0||uploads.size>0||!!pendingUpload;
+function clearJournalSearch():void {
+  searchRevision++;
+  $('journalSearch').hidden=true;
+  $('journalSearchToggle').setAttribute('aria-expanded','false');
+  input('journalSearchText').value='';
+  input('journalSearchDate').value='';
+  $('journalSearchStatus').textContent='';
+  $('journalSearchResults').replaceChildren();
+}
+function plainEntryText(html:string):string {
+  const template=document.createElement('template');template.innerHTML=sanitize(html);
+  return template.content.textContent?.replace(/\s+/g,' ').trim()||'';
+}
+function journalSearchSnippet(text:string,query:string):string {
+  if(!text)return 'Entry from this day.';
+  const index=query?text.toLocaleLowerCase().indexOf(query):-1;
+  if(index<0)return text.slice(0,120)+(text.length>120?'…':'');
+  const start=Math.max(0,index-45),end=Math.min(text.length,index+query.length+65);
+  return `${start?'…':''}${text.slice(start,end)}${end<text.length?'…':''}`;
+}
+async function searchJournal():Promise<void> {
+  const query=input('journalSearchText').value.trim().toLocaleLowerCase();
+  const date=input('journalSearchDate').value;
+  const status=$('journalSearchStatus'),results=$('journalSearchResults');
+  results.replaceChildren();
+  if(!query&&!date){status.textContent='Enter a word or choose a day to search.';return;}
+  const token=++searchRevision;
+  await flushJournal();
+  if(token!==searchRevision||locking||!vault.unlocked)return;
+  const data=await vault.read();
+  if(token!==searchRevision||locking||!vault.unlocked)return;
+  const matches=Object.keys(data.days).sort((a,b)=>b.localeCompare(a)).flatMap(key=>{
+    if(date&&key!==date)return [];
+    const day={...data.days[key]!,...drafts.get(key)};
+    const entryText=plainEntryText(day.html);
+    const textParts=[entryText,day.note,...(day.photoCaptions||[])].filter(Boolean);
+    const hasEntry=!!(entryText||day.note||day.images.length||day.mood||day.stickers?.length);
+    if(!hasEntry)return [];
+    const combined=`${key} ${textParts.join(' ')}`.toLocaleLowerCase();
+    if(query&&!combined.includes(query))return [];
+    const matchingText=textParts.find(part=>part.toLocaleLowerCase().includes(query))||textParts[0]||'';
+    return [{key,preview:journalSearchSnippet(matchingText,query)}];
+  });
+  const shown=matches.slice(0,30);
+  for(const match of shown){
+    const item=document.createElement('li'),button=document.createElement('button'),dateLabel=document.createElement('strong'),preview=document.createElement('span');
+    button.type='button';button.className='journal-search-result';button.dataset.key=match.key;
+    dateLabel.textContent=new Date(`${match.key}T12:00:00`).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    preview.textContent=match.preview;button.append(dateLabel,preview);item.append(button);results.append(item);
+    button.addEventListener('click',()=>{void attempt(async()=>{await select(match.key);clearJournalSearch();editor().focus({preventScroll:true});});});
+  }
+  status.textContent=matches.length
+    ?`Found ${matches.length} ${matches.length===1?'entry':'entries'}${matches.length>shown.length?`; showing the first ${shown.length}`:''}.`
+    :'No matching entries.';
+}
 function patch(value:Partial<Day>,key=rendered):void {
   if(!key||locking||!vault.unlocked)return;
   drafts.set(key,{...drafts.get(key),...value});
@@ -121,7 +177,7 @@ async function lock():Promise<void>{
   if(locking)return;
   // Flush the note modal too; locking never discards an unfinished private draft.
   if(noteTarget&&$('noteBubbleModal').classList.contains('show'))patch({highlightNotes:{...current.highlightNotes,[noteTarget.id]:input('noteBubbleText').value}},noteTarget.date);
-  locking=true;desk.clear();$('journalPaper').getAnimations().forEach(a=>a.cancel());editor().contentEditable='false';input('memoryNote').disabled=true;input('memoryImageInput').disabled=true;input('memoryFrame').disabled=true;
+  locking=true;clearJournalSearch();desk.clear();$('journalPaper').getAnimations().forEach(a=>a.cancel());editor().contentEditable='false';input('memoryNote').disabled=true;input('memoryImageInput').disabled=true;input('memoryFrame').disabled=true;
   const photoCaption=$('memoryGallery').querySelector<HTMLTextAreaElement>('#memoryPhotoCaption');if(photoCaption)photoCaption.disabled=true;
   try{
     await Promise.all([...uploads]);if(uploadFailed&&pendingUpload)await startUpload(pendingUpload);
@@ -137,6 +193,14 @@ export function initJournal():void {
   editor().setAttribute('role','textbox');editor().setAttribute('aria-label','Daily journal entry');editor().setAttribute('aria-multiline','true');
   on('unlockJournalBtn','click',unlock);on('journalPinInput','keydown',e=>{if((e as KeyboardEvent).key==='Enter')return unlock();});
   on('lockJournalBtn','click',lock);
+  on('journalSearchToggle','click',()=>{
+    if(!ready||locking)return;
+    const panel=$('journalSearch'),open=panel.hidden;
+    if(open){panel.hidden=false;$('journalSearchToggle').setAttribute('aria-expanded','true');input('journalSearchText').focus();}
+    else clearJournalSearch();
+  });
+  on('journalSearchForm','submit',event=>{event.preventDefault();return searchJournal();});
+  on('journalSearchClose','click',()=>{$('journalSearchToggle').focus();clearJournalSearch();});
   on('promptPocketToggle','click',()=>{if(!ready||locking)return;if($('promptPocketSlip').hidden)drawPrompt();else tuckPrompt();});
   on('promptPocketAnother','click',()=>{if(ready&&!locking)drawPrompt();});
   on('promptPocketUse','click',usePrompt);
