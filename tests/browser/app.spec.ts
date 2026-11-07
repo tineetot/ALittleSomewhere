@@ -14,6 +14,24 @@ test('Planner recurrence, completion, exceptions and future deletion survive rel
   await page.locator('#nextDayBtn').click();await expect(page.locator('.task-text')).toHaveText('A daily walk');await page.locator('.task-del').click();await page.locator('#choiceAllFuture').click();await page.locator('#nextDayBtn').click();await expect(page.locator('.task-text')).toHaveCount(0);
   await page.locator('#todayBtn').click();await expect(page.locator('.task-check')).toBeChecked();
 });
+test('A little later keeps tasks undated, moves task occurrences, and plans them onto the selected day',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('#laterTaskText').fill('Visit the flower shop');await page.locator('#laterTaskNotes').fill('Maybe this weekend');await page.locator('#laterTaskForm button[type="submit"]').click();
+  await expect(page.locator('#laterTaskList .later-task-item')).toHaveCount(1);await expect(page.locator('#laterTaskList')).toContainText('Maybe this weekend');
+  await page.locator('#newTaskText').fill('Pick up a parcel');await page.locator('#newTaskNotes').fill('At the post office');await page.locator('#addTaskBtn').click();
+  let parcel=page.locator('#dayTaskList .task-item-single').filter({hasText:'Pick up a parcel'});await parcel.locator('summary.reason-link').click();await parcel.locator('[data-reason]').fill('Remember my parcel card');await parcel.locator('.reason-save').click();parcel=page.locator('#dayTaskList .task-item-single').filter({hasText:'Pick up a parcel'});await parcel.locator('.move-to-later').click();
+  await expect(page.locator('#dayTaskList')).not.toContainText('Pick up a parcel');await expect(page.locator('#laterTaskList .later-task-item')).toHaveCount(2);await expect(page.locator('#laterTaskList')).toContainText('Remember my parcel card');
+  const shop=page.locator('#laterTaskList .later-task-item').filter({hasText:'Visit the flower shop'});await shop.locator('.plan-later-task').click();
+  await expect(page.locator('#dayTaskList')).toContainText('Visit the flower shop');await expect(page.locator('#dayTaskList')).toContainText('Maybe this weekend');await expect(page.locator('#laterTaskList .later-task-item')).toHaveCount(1);
+  const parcelLater=page.locator('#laterTaskList .later-task-item').filter({hasText:'Pick up a parcel'});await parcelLater.locator('.plan-later-task').click();await expect(page.locator('#dayTaskList')).toContainText('Remember my parcel card');
+  await page.locator('#repeatSelect').selectOption('daily');await page.locator('#newTaskText').fill('Water the plants');await page.locator('#addTaskBtn').click();
+  const recurring=page.locator('#dayTaskList .task-item-single').filter({hasText:'Water the plants'});await recurring.locator('.move-to-later').click();
+  await expect(page.locator('#dayTaskList')).not.toContainText('Water the plants');await expect(page.locator('#laterTaskList')).toContainText('Water the plants');
+  await page.locator('#nextDayBtn').click();await expect(page.locator('#dayTaskList')).toContainText('Water the plants');
+  await page.reload();await expect(page.locator('#laterTaskList')).toContainText('Water the plants');
+  await page.locator('#laterTaskList .later-task-item').filter({hasText:'Water the plants'}).locator('.delete-later-task').click();await expect(page.locator('#laterTaskList')).not.toContainText('Water the plants');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+});
 test('Planner retains failed form input, retries once, and preserves drafts across navigation',async({page})=>{
   await page.locator('#newTaskText').fill('Keep my task');await page.locator('#newTaskNotes').fill('Keep my details');await writeFailure(page,true);await page.locator('#addTaskBtn').click();await expect(page.locator('#appError')).toBeVisible();await expect(page.locator('#newTaskText')).toHaveValue('Keep my task');
   await writeFailure(page,false);await page.locator('#appRetry').click();await expect(page.locator('.task-text')).toHaveCount(1);await page.locator('#newTaskText').fill('Tomorrow draft');await page.locator('#nextDayBtn').click();await page.locator('#prevDayBtn').click();await expect(page.locator('#newTaskText')).toHaveValue('Tomorrow draft');

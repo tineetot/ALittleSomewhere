@@ -19,6 +19,15 @@ it('accepts existing pages and rejects damaged decoration records rather than dr
   expect(validStickers([sticker,sticker])).toBe(false);
   expect(validPrivate({version:2,days:{'2026-10-29':{...emptyDay(),photoFrames:['unknown']}}})).toBe(false);
 });
+it('validates undated later tasks while accepting existing public records without the optional list',()=>{
+  const data=emptyPublic();
+  expect(data.laterTasks).toEqual([]);
+  const existing=structuredClone(data);delete existing.laterTasks;
+  expect(validPublic(existing)).toBe(true);
+  data.laterTasks!.push({id:'later-1',text:'Visit the flower shop',notes:'This weekend',important:false,reason:'',order:1});
+  expect(validPublic(data)).toBe(true);
+  expect(validPublic({...data,laterTasks:[{...data.laterTasks[0]!,important:'soon'}]})).toBe(false);
+});
 beforeAll(()=>{vi.stubGlobal('navigator',{locks:{request:async(_name:string,action:()=>Promise<unknown>)=>action()}});});
 describe('serialized repository operations (mock storage)',()=>{
   it('retains independent overlapping updates',async()=>{const repo=new Repository(new Memory(),'public',emptyPublic,validPublic);await Promise.all(Array.from({length:40},(_,i)=>repo.update(d=>{d.answers[String(i)]=String(i);})));expect(Object.keys((await repo.read()).answers)).toHaveLength(40);});

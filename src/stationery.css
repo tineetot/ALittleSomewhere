@@ -34,6 +34,21 @@ body[data-paper="floral"] #scrapbookBackdrop::before,.swatch-floral{background-i
 .journal-search-result span{font-size:13px;line-height:1.5;}
 .journal-search-result:hover{background:#fde6ee;}
 @media(max-width:600px){.journal-search form{grid-template-columns:1fr;}.journal-search-actions{grid-column:1;}}
+.later-card{margin-top:16px;}
+.later-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.later-heading h3{margin:2px 0 3px;color:var(--rose-deep);font-family:Fraunces,serif;font-size:23px;}
+.later-heading p{margin:0 0 14px;color:var(--plum-soft);font-size:13px;}
+.later-add-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:12px;}
+.later-add-form input,.later-add-form textarea{grid-column:1;min-width:0;width:100%;padding:10px 12px;border:1px solid var(--lace);border-radius:8px;background:var(--cream);color:var(--plum);}
+.later-add-form button{grid-column:2;grid-row:1/3;align-self:stretch;}
+.later-task-list{gap:8px;}
+.later-task-item{align-items:center;}
+.later-task-item .task-actions{flex-wrap:wrap;justify-content:flex-end;}
+.later-task-item .plan-later-task,.move-to-later{min-height:34px;padding:5px 10px;border:1px solid #c85c8266;border-radius:999px;background:#fffaf4;color:var(--rose-deep);font-size:11px;font-weight:600;}
+.later-task-item .delete-later-task{min-width:32px;min-height:32px;border:0;background:transparent;color:var(--rose-deep);font-size:19px;}
+.move-to-later{min-width:36px;padding:4px 8px;}
+.later-task-item .plan-later-task:hover,.move-to-later:hover{background:#fde6ee;}
+@media(max-width:600px){.later-add-form{grid-template-columns:1fr;}.later-add-form input,.later-add-form textarea,.later-add-form button{grid-column:1;grid-row:auto;}.later-task-item{align-items:flex-start;}.later-task-item .task-actions{flex-basis:100%;}}
 .wheel-heading-copy .eyebrow{margin-bottom:2px;}
 .wheel-heading-copy h2{margin:0!important;}
 .decorate-drawer{font-size:12px;}

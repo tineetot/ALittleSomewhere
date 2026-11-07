@@ -14,6 +14,14 @@ export interface Task {
   order: number;
   seriesId?: string;
 }
+export interface LaterTask {
+  id: string;
+  text: string;
+  notes: string;
+  important: boolean;
+  reason: string;
+  order: number;
+}
 export interface Series {
   id: string;
   text: string;
@@ -66,6 +74,7 @@ export interface Flow {
 export interface PublicData {
   version: 2;
   tasks: Task[];
+  laterTasks?: LaterTask[];
   series: Series[];
   gratitude: { id: string; date: string; text: string }[];
   answers: Record<string, string>;
@@ -97,6 +106,7 @@ export const emptyFlow = (): Flow => ({
 export const emptyPublic = (): PublicData => ({
   version: 2,
   tasks: [],
+  laterTasks: [],
   series: [],
   gratitude: [],
   answers: {},
@@ -227,6 +237,18 @@ export function validPublic(v: unknown): v is PublicData {
         num(t.order) &&
         (t.seriesId === undefined || identifier(t.seriesId)),
     ) &&
+    (v.laterTasks === undefined ||
+      (Array.isArray(v.laterTasks) &&
+        v.laterTasks.every(
+          (t) =>
+            obj(t) &&
+            identifier(t.id) &&
+            str(t.text) &&
+            str(t.notes) &&
+            bool(t.important) &&
+            str(t.reason) &&
+            num(t.order),
+        ))) &&
     Array.isArray(v.series) &&
     v.series.every(
       (s) =>

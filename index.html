@@ -318,6 +318,23 @@
 
       <div class="task-list-single" id="dayTaskList"></div>
     </div>
+    <section class="card later-card" aria-labelledby="laterHeading">
+      <div class="later-heading">
+        <div>
+          <div class="eyebrow">No due date</div>
+          <h3 id="laterHeading">A little later</h3>
+          <p>Save an idea here for whenever you feel ready.</p>
+        </div>
+      </div>
+      <form class="later-add-form" id="laterTaskForm">
+        <label class="sr-only" for="laterTaskText">Something for later</label>
+        <input type="text" id="laterTaskText" maxlength="300" placeholder="Something for later…">
+        <label class="sr-only" for="laterTaskNotes">Optional notes for later</label>
+        <textarea id="laterTaskNotes" maxlength="1000" rows="2" placeholder="Notes (optional)"></textarea>
+        <button class="primary" type="submit">＋ Save for later</button>
+      </form>
+      <div class="task-list-single later-task-list" id="laterTaskList"></div>
+    </section>
 
     <div class="modal-overlay" id="recurringChoiceModal">
       <div class="modal-box center">

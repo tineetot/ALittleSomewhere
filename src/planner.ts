@@ -1,6 +1,6 @@
 import { $, input, on, attempt, once, escape, dateHeading, saved } from './ui';
 import { publicData } from './services';
-import { dateKey, shiftDate, tasksFor, changeTask, uid, type Task, type PublicData } from './model';
+import { dateKey, shiftDate, tasksFor, changeTask, uid, type Task, type LaterTask, type PublicData } from './model';
 import { calendar, dayButtons } from './calendar';
 import { turnPage } from './page-turn';
 let selected=dateKey(),revision=0,important=false,pending:Task|undefined;
@@ -20,7 +20,7 @@ export async function renderPlanner():Promise<void>{
     <input class="task-check" type="checkbox" aria-label="Complete ${escape(t.text)}" ${t.done?'checked':''}>
     <div class="task-main"><div class="task-text-row"><span class="task-text">${escape(t.text)}</span>${t.important?'<span class="priority-star">★</span>':''}${t.seriesId?'<span class="repeat-badge" aria-label="Repeating task">↻</span>':''}</div>${t.notes?`<div class="task-notes">${escape(t.notes)}</div>`:''}
     <details ${reasons.has(t.id)?'open':''}><summary class="reason-link">${t.reason?'Reason: '+escape(t.reason):'Add a reason or reflection'}</summary><div class="reason-input-row"><input data-reason="${t.id}" aria-label="Reason for this task" value="${escape(reasons.get(t.id)??t.reason)}"><button class="reason-save">Save</button></div></details></div>
-    <div class="task-actions"><button class="icon-btn move-up" aria-label="Move task up">↑</button><button class="icon-btn move-down" aria-label="Move task down">↓</button><button class="task-del" aria-label="Delete ${escape(t.text)}">×</button></div></div>`).join('')||'<div class="empty">No tasks for this date.</div>';
+    <div class="task-actions">${!t.done?`<button class="move-to-later" aria-label="Move ${escape(t.text)} to A little later"${t.seriesId?' title="Moves this occurrence only; future repeats stay scheduled."':''}>Later</button>`:''}<button class="icon-btn move-up" aria-label="Move task up">↑</button><button class="icon-btn move-down" aria-label="Move task down">↓</button><button class="task-del" aria-label="Delete ${escape(t.text)}">×</button></div></div>`).join('')||'<div class="empty">No tasks for this date.</div>';
   let dragged:string|undefined;
   for(const task of tasks){
     const row=[...list.children].find(el=>(el as HTMLElement).dataset.id===task.id) as HTMLElement;
@@ -30,6 +30,7 @@ export async function renderPlanner():Promise<void>{
       if(task.seriesId){pending=task;$('recurringChoiceModal').classList.add('show');}
       else run(async()=>{await publicData.update(d=>{d.tasks=d.tasks.filter(t=>t.id!==task.id);});await renderPlanner();saved();});
     };
+    row.querySelector<HTMLButtonElement>('.move-to-later')?.addEventListener('click',()=>{void attempt(()=>moveToLater(task));});
     const reason=row.querySelector<HTMLInputElement>('[data-reason]')!;reason.oninput=()=>reasons.set(task.id,reason.value);
     const saveReason=()=>run(async()=>{const value=reason.value;await publicData.update(d=>changeTask(d,task,{reason:value}));if(reasons.get(task.id)===value)reasons.delete(task.id);await renderPlanner();saved();});
     row.querySelector<HTMLButtonElement>('.reason-save')!.onclick=saveReason;reason.onkeydown=e=>{if(e.key==='Enter')saveReason();};
@@ -37,6 +38,50 @@ export async function renderPlanner():Promise<void>{
     row.ondragstart=e=>{if((e.target as HTMLElement).matches('input')){e.preventDefault();return;}dragged=task.id;e.dataTransfer?.setData('text/plain',task.id);};
     row.ondragover=e=>e.preventDefault();row.ondrop=e=>{e.preventDefault();const from=dragged;if(from)run(()=>reorder(from,task.id,key));};
   }
+  renderLater(data.laterTasks||[]);
+}
+function renderLater(tasks:LaterTask[]):void{
+  const list=$('laterTaskList');
+  list.innerHTML=tasks.slice().sort((a,b)=>a.order-b.order).map(task=>`<div class="task-item-single later-task-item ${task.important?'important':''}" data-id="${escape(task.id)}"><div class="task-main"><div class="task-text-row"><span class="task-text">${escape(task.text)}</span>${task.important?'<span class="priority-star" aria-label="Important">★</span>':''}</div>${task.notes?`<div class="task-notes">${escape(task.notes)}</div>`:''}${task.reason?`<div class="task-reason">Reason: ${escape(task.reason)}</div>`:''}</div><div class="task-actions"><button class="plan-later-task" type="button">Plan for this day</button><button class="delete-later-task" type="button" aria-label="Delete ${escape(task.text)}">×</button></div></div>`).join('')||'<div class="empty">Nothing waiting here. Add an idea whenever you like.</div>';
+  for(const task of tasks){
+    const row=[...list.children].find(el=>(el as HTMLElement).dataset.id===task.id) as HTMLElement|undefined;
+    if(!row)continue;
+    row.querySelector<HTMLButtonElement>('.plan-later-task')!.addEventListener('click',()=>{void attempt(()=>planLaterTask(task));});
+    row.querySelector<HTMLButtonElement>('.delete-later-task')!.addEventListener('click',()=>{void attempt(()=>deleteLaterTask(task.id));});
+  }
+}
+async function moveToLater(task:Task):Promise<void>{
+  await publicData.update(data=>{
+    const currentTask=tasksFor(data,task.date).find(item=>item.id===task.id);
+    if(!currentTask)throw new Error('This task changed in another tab. Refresh Planner and try again.');
+    if(currentTask.seriesId){
+      const series=data.series.find(item=>item.id===currentTask.seriesId);
+      if(!series)throw new Error('This repeating task changed in another tab. Refresh Planner and try again.');
+      if(!series.exceptions.includes(currentTask.date))series.exceptions.push(currentTask.date);
+      data.tasks=data.tasks.filter(item=>item.seriesId!==series.id||item.date!==currentTask.date);
+    }else data.tasks=data.tasks.filter(item=>item.id!==currentTask.id);
+    data.laterTasks??=[];
+    data.laterTasks.push({id:uid(),text:currentTask.text,notes:currentTask.notes,important:currentTask.important,reason:currentTask.reason,order:Date.now()});
+  });
+  saved();await renderPlanner();
+}
+async function planLaterTask(task:LaterTask):Promise<void>{
+  const key=selected;
+  await publicData.update(data=>{
+    const index=(data.laterTasks||[]).findIndex(item=>item.id===task.id);
+    if(index<0)throw new Error('This later task changed in another tab. Refresh Planner and try again.');
+    const [later]=(data.laterTasks||[]).splice(index,1);
+    data.tasks.push({id:later!.id,date:key,text:later!.text,notes:later!.notes,important:later!.important,done:false,reason:later!.reason,order:Date.now()});
+  });
+  saved();await renderPlanner();
+}
+async function deleteLaterTask(id:string):Promise<void>{
+  await publicData.update(data=>{
+    const tasks=data.laterTasks||[],index=tasks.findIndex(task=>task.id===id);
+    if(index<0)throw new Error('This later task changed in another tab. Refresh Planner and try again.');
+    tasks.splice(index,1);
+  });
+  saved();await renderPlanner();
 }
 function persistOrder(d:PublicData,key:string,ids:string[]):void{const tasks=tasksFor(d,key);ids.forEach((id,i)=>{const t=tasks.find(t=>t.id===id);if(t)changeTask(d,t,{order:i});});}
 async function move(id:string,delta:number,key:string):Promise<void>{await publicData.update(d=>{const ids=tasksFor(d,key).map(t=>t.id),i=ids.indexOf(id),j=i+delta;if(i>=0&&j>=0&&j<ids.length){[ids[i],ids[j]]=[ids[j],ids[i]];persistOrder(d,key,ids);}});await renderPlanner();saved();}
@@ -55,6 +100,16 @@ export function initPlanner():void{
     saved();await renderPlanner();
   });}
   on('addTaskBtn','click',add);on('newTaskText','keydown',e=>{if((e as KeyboardEvent).key==='Enter')return add();});
+  on('laterTaskForm','submit',async event=>{
+    event.preventDefault();
+    const text=input('laterTaskText').value.trim(),notes=input('laterTaskNotes').value;
+    if(!text)return;
+    await once('later-task-add',async()=>{
+      await publicData.update(data=>{data.laterTasks??=[];data.laterTasks.push({id:uid(),text,notes,important:false,reason:'',order:Date.now()});});
+      if(input('laterTaskText').value.trim()===text&&input('laterTaskNotes').value===notes){input('laterTaskText').value='';input('laterTaskNotes').value='';}
+      saved();await renderPlanner();
+    });
+  });
   on('choiceCancel','click',()=>{pending=undefined;$('recurringChoiceModal').classList.remove('show');});
   for(const id of ['choiceJustThis','choiceAllFuture'])on(id,'click',async()=>{
     await once('recurring-delete',async()=>{const task=pending;if(!task)return;
