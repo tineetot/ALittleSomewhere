@@ -14,6 +14,21 @@ test('Planner recurrence, completion, exceptions and future deletion survive rel
   await page.locator('#nextDayBtn').click();await expect(page.locator('.task-text')).toHaveText('A daily walk');await page.locator('.task-del').click();await page.locator('#choiceAllFuture').click();await page.locator('#nextDayBtn').click();await expect(page.locator('.task-text')).toHaveCount(0);
   await page.locator('#todayBtn').click();await expect(page.locator('.task-check')).toBeChecked();
 });
+test('Main menu is aligned with header actions and opens accessibly on desktop and mobile',async({page})=>{
+  for(const viewport of [{width:1440,height:900},{width:390,height:844},{width:320,height:700}]){
+    await page.setViewportSize(viewport);
+    const menu=page.locator('#mainMenu'),summary=menu.locator('summary'),panel=menu.locator('.main-menu-panel');
+    await expect(summary).toHaveAttribute('aria-expanded','false');
+    await summary.click();await expect(menu).toHaveAttribute('open','');await expect(summary).toHaveAttribute('aria-expanded','true');
+    await expect(panel).toBeVisible();await expect(panel).toContainText('Settings');await expect(panel).toContainText('Motivational Jar');
+    await expect(panel.getByRole('button',{name:/Settings/})).toBeDisabled();await expect(panel.getByRole('button',{name:/Motivational Jar/})).toBeDisabled();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+    const panelBox=await panel.boundingBox();expect(panelBox).not.toBeNull();expect(panelBox!.x).toBeGreaterThanOrEqual(0);expect(panelBox!.x+panelBox!.width).toBeLessThanOrEqual(viewport.width+1);
+    await page.keyboard.press('Escape');await expect(menu).not.toHaveAttribute('open','');await expect(summary).toHaveAttribute('aria-expanded','false');await expect(summary).toBeFocused();
+    await summary.click();await page.getByRole('navigation',{name:'Your scrapbook sections'}).getByRole('button',{name:'Reflect'}).click();await expect(menu).not.toHaveAttribute('open','');
+    await expect(page.getByRole('navigation',{name:'Your scrapbook sections'})).toBeVisible();
+  }
+});
 test('A little later keeps tasks undated, moves task occurrences, and plans them onto the selected day',async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await page.locator('#laterTaskText').fill('Visit the flower shop');await page.locator('#laterTaskNotes').fill('Maybe this weekend');await page.locator('#laterTaskForm button[type="submit"]').click();

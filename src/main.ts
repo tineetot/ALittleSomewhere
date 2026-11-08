@@ -29,6 +29,21 @@ let active = "planner";
 let tabRevision = 0;
 const decorateDrawer = $<HTMLDetailsElement>("decorateDrawer");
 const decorateToolbar = decorateDrawer.closest<HTMLElement>(".desk-toolbar")!;
+const mainMenu = $<HTMLDetailsElement>("mainMenu");
+const mainMenuSummary = mainMenu.querySelector<HTMLElement>("summary")!;
+mainMenu.addEventListener("toggle", () =>
+  mainMenuSummary.setAttribute("aria-expanded", String(mainMenu.open)),
+);
+mainMenu.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && mainMenu.open) {
+    mainMenu.open = false;
+    mainMenuSummary.focus();
+  }
+});
+document.addEventListener("pointerdown", (event) => {
+  if (mainMenu.open && !mainMenu.contains(event.target as Node))
+    mainMenu.open = false;
+});
 function positionDecorate(): void {
   const toolbar = decorateToolbar;
   let heading: HTMLElement | null = null,

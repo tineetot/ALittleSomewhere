@@ -23,7 +23,19 @@
 
 <header class="top">
   <div class="brand"><span class="seal"><img src="/icon-192.png" alt=""></span><span class="display italic">A Little Somewhere</span></div>
-  <button id="returnCover" type="button">Diary cover</button>
+  <div class="header-actions">
+    <details class="main-menu" id="mainMenu">
+      <summary aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"/></svg><span>Main menu</span></summary>
+      <div class="main-menu-panel">
+        <p class="main-menu-heading">A little more</p>
+        <ul>
+          <li><button type="button" disabled><span>Settings</span><span class="menu-coming">Coming soon</span></button></li>
+          <li><button type="button" disabled><span>Motivational Jar</span><span class="menu-coming">Coming soon</span></button></li>
+        </ul>
+      </div>
+    </details>
+    <button id="returnCover" type="button">Diary cover</button>
+  </div>
 <nav class="tabs" aria-label="Your scrapbook sections">
     <button class="tab" data-tab="journal">Journal</button>
     <button class="tab" data-tab="reflect">Reflect</button>
